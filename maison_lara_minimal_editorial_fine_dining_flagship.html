@@ -1,0 +1,3210 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MAISON ÉLARA — Minimal Editorial Haute Gastronomie</title>
+
+  <!-- Google Fonts: Cormorant Garamond & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Inter:wght@300;400;500&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            cream: '#F7F3EC',
+            linen: '#EFE9DF',
+            stone: '#DDD4C6',
+            ink: '#1C1917',
+            taupe: '#665E55',
+            brass: '#9E7F47',
+          },
+          fontFamily: {
+            serif: ['"Cormorant Garamond"', 'Georgia', 'serif'],
+            sans: ['"Inter"', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+          },
+          letterSpacing: {
+            editorial: '0.2em',
+            ultra: '0.3em',
+          }
+        }
+      }
+    };
+  </script>
+
+  <!-- Three.js r128 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <style>
+    :root {
+      --bg-cream: #F7F3EC;
+      --bg-linen: #EFE9DF;
+      --border-stone: #DDD4C6;
+      --ink-primary: #1C1917;
+      --ink-secondary: #665E55;
+      --accent-brass: #9E7F47;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      background-color: var(--bg-cream);
+      color: var(--ink-primary);
+      font-family: 'Inter', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    body {
+      background-color: var(--bg-cream);
+      color: var(--ink-primary);
+      overflow-x: hidden;
+      margin: 0;
+    }
+
+    ::selection {
+      background-color: rgba(158, 127, 71, 0.22);
+      color: #1C1917;
+    }
+
+    /* Refined Warm Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #F7F3EC;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #D2C7B7;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #9E7F47;
+    }
+
+    /* Architectural Hairlines */
+    .hairline {
+      border-color: #DDD4C6;
+    }
+
+    /* Animated Hairline Underline for Links */
+    .editorial-link {
+      position: relative;
+      padding-bottom: 3px;
+    }
+    .editorial-link::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      height: 1px;
+      background-color: #9E7F47;
+      transform: scaleX(0);
+      transform-origin: right center;
+      transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .editorial-link:hover::after,
+    .editorial-link:focus-visible::after {
+      transform: scaleX(1);
+      transform-origin: left center;
+    }
+
+    /* Subtle Non-Intrusive Desktop Cursor Ring */
+    #custom-cursor {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 30px;
+      height: 30px;
+      border: 1px solid rgba(158, 127, 71, 0.55);
+      border-radius: 9999px;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: width 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+                  height 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+                  border-color 0.3s ease,
+                  background-color 0.3s ease,
+                  opacity 0.3s ease;
+      opacity: 0;
+      display: none;
+    }
+    @media (hover: hover) and (pointer: fine) {
+      #custom-cursor {
+        display: block;
+      }
+    }
+    #custom-cursor.cursor-active {
+      width: 48px;
+      height: 48px;
+      border-color: rgba(158, 127, 71, 0.9);
+      background-color: rgba(158, 127, 71, 0.06);
+    }
+
+    /* Scroll Reveal Animations */
+    .reveal-up {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+                  transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .reveal-up.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Staggered Hero Entrance */
+    .hero-fade {
+      opacity: 0;
+      transform: translateY(16px);
+      animation: heroReveal 1.05s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+    .hero-delay-1 { animation-delay: 0.12s; }
+    .hero-delay-2 { animation-delay: 0.28s; }
+    .hero-delay-3 { animation-delay: 0.44s; }
+    .hero-delay-4 { animation-delay: 0.60s; }
+    .hero-delay-5 { animation-delay: 0.78s; }
+
+    @keyframes heroReveal {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Minimal Scroll Down Indicator */
+    @keyframes scrollPulse {
+      0% { transform: scaleY(0); transform-origin: top; opacity: 0; }
+      40% { transform: scaleY(1); transform-origin: top; opacity: 1; }
+      60% { transform: scaleY(1); transform-origin: bottom; opacity: 1; }
+      100% { transform: scaleY(0); transform-origin: bottom; opacity: 0; }
+    }
+    .scroll-line-anim {
+      animation: scrollPulse 2.4s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+    }
+
+    /* Subtle 3D Mouse Tilt Card */
+    .tilt-card {
+      transform-style: preserve-3d;
+      will-change: transform;
+      transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.35s ease;
+    }
+
+    /* Magnetic CTA Smooth Return */
+    .magnetic-btn {
+      transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+                  background-color 0.3s ease,
+                  color 0.3s ease,
+                  border-color 0.3s ease;
+    }
+
+    /* Minimalist Bottom-Border Input with Animated Antique Brass Focus Line */
+    .editorial-field {
+      position: relative;
+    }
+    .editorial-input {
+      width: 100%;
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid #DDD4C6;
+      color: #1C1917;
+      padding: 0.75rem 0;
+      font-size: 0.9rem;
+      font-weight: 300;
+      border-radius: 0;
+      transition: border-color 0.3s ease;
+    }
+    .editorial-input:focus {
+      outline: none;
+    }
+    .editorial-input::placeholder {
+      color: rgba(102, 94, 85, 0.55);
+    }
+    .editorial-field::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      height: 1.5px;
+      background-color: #9E7F47;
+      transform: scaleX(0);
+      transform-origin: left center;
+      transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+      pointer-events: none;
+    }
+    .editorial-field:focus-within::after {
+      transform: scaleX(1);
+    }
+
+    select.editorial-input option {
+      background-color: #F7F3EC;
+      color: #1C1917;
+    }
+
+    /* Canvas Sizing */
+    .webgl-canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      outline: none;
+    }
+
+    /* Reduced Motion Preferences */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+      .reveal-up, .hero-fade {
+        opacity: 1 !important;
+        transform: none !important;
+      }
+      #custom-cursor {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body class="bg-cream text-ink antialiased">
+
+  <!-- 1. THIN 2PX ANTIQUE BRASS SCROLL PROGRESS BAR -->
+  <div
+    id="scroll-progress-bar"
+    class="fixed top-0 left-0 h-[2px] bg-brass z-[100] transition-[width] duration-75 ease-out pointer-events-none"
+    style="width: 0%;"
+    aria-hidden="true"
+  ></div>
+
+  <!-- REFINED DESKTOP CURSOR RING -->
+  <div id="custom-cursor" aria-hidden="true"></div>
+
+  <!-- EDITORIAL TOAST NOTIFICATION -->
+  <div
+    id="editorial-toast"
+    role="status"
+    aria-live="polite"
+    class="fixed bottom-6 right-6 z-[95] bg-cream border border-stone px-6 py-4 translate-y-12 opacity-0 pointer-events-none transition-all duration-500 max-w-sm"
+  >
+    <div class="flex items-start gap-3">
+      <span class="w-1.5 h-1.5 rounded-full bg-brass mt-2 shrink-0"></span>
+      <div>
+        <p id="toast-title" class="font-serif text-lg text-ink leading-tight"></p>
+        <p id="toast-message" class="text-xs text-taupe mt-1 leading-relaxed"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. MINIMAL FLOATING NAVIGATION -->
+  <header
+    id="main-navbar"
+    class="fixed top-0 left-0 right-0 z-50 transition-all duration-500 border-b border-transparent"
+  >
+    <nav class="max-w-[1440px] mx-auto px-6 md:px-12 h-20 md:h-24 flex items-center justify-between" aria-label="Primary Navigation">
+      <!-- Left: Serif Wordmark -->
+      <a
+        href="#hero"
+        data-cursor="interactive"
+        class="font-serif text-xl md:text-2xl tracking-[0.24em] text-ink hover:text-brass transition-colors duration-300 uppercase"
+      >
+        Maison Élara
+      </a>
+
+      <!-- Center: Balanced Editorial Links -->
+      <ul class="hidden lg:flex items-center gap-9 text-[11px] uppercase tracking-[0.22em] text-taupe font-normal">
+        <li><a href="#philosophy" data-cursor="interactive" class="editorial-link hover:text-ink transition-colors">Philosophy</a></li>
+        <li><a href="#signature" data-cursor="interactive" class="editorial-link hover:text-ink transition-colors">Signature</a></li>
+        <li><a href="#atmosphere" data-cursor="interactive" class="editorial-link hover:text-ink transition-colors">Atmosphere</a></li>
+        <li><a href="#menu" data-cursor="interactive" class="editorial-link hover:text-ink transition-colors">Menu</a></li>
+        <li><a href="#experiences" data-cursor="interactive" class="editorial-link hover:text-ink transition-colors">Experiences</a></li>
+        <li><a href="#gallery" data-cursor="interactive" class="editorial-link hover:text-ink transition-colors">Gallery</a></li>
+      </ul>
+
+      <!-- Right: Reserve, Tasting Selection (Cart), Guest Dossier (Account) -->
+      <div class="flex items-center gap-4 md:gap-5">
+        <a
+          href="#reservations"
+          data-cursor="interactive"
+          class="hidden sm:inline-flex items-center px-6 py-2.5 border border-ink text-[11px] uppercase tracking-[0.22em] text-ink hover:bg-ink hover:text-cream transition-all duration-300"
+        >
+          Reserve
+        </a>
+
+        <!-- Tasting Selection (Cart) -->
+        <button
+          id="open-cart-btn"
+          type="button"
+          data-cursor="interactive"
+          aria-label="Open Tasting Selection"
+          class="relative p-2 text-ink/80 hover:text-brass transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-brass"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.3" viewBox="0 0 24 24">
+            <path stroke-linecap="square" stroke-linejoin="miter" d="M6 7h12l1 13H5L6 7z" />
+            <path stroke-linecap="square" stroke-linejoin="miter" d="M9 7V5a3 3 0 0 1 6 0v2" />
+          </svg>
+          <span
+            id="cart-badge"
+            class="absolute -top-0.5 -right-0.5 min-w-[17px] h-[17px] px-1 bg-brass text-cream text-[10px] font-medium flex items-center justify-center rounded-full opacity-0 scale-75 transition-all duration-300"
+          >0</span>
+        </button>
+
+        <!-- Guest Dossier (Account) -->
+        <button
+          id="open-account-btn"
+          type="button"
+          data-cursor="interactive"
+          aria-label="Open Guest Dossier"
+          class="relative p-2 text-ink/80 hover:text-brass transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-brass"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.3" viewBox="0 0 24 24">
+            <circle cx="12" cy="8" r="4" />
+            <path stroke-linecap="square" d="M4 20c0-4 3.5-6.5 8-6.5s8 2.5 8 6.5" />
+          </svg>
+          <span
+            id="account-dot"
+            class="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-brass opacity-0 transition-opacity duration-300"
+          ></span>
+        </button>
+
+        <!-- Mobile Menu Button -->
+        <button
+          id="mobile-menu-open"
+          type="button"
+          aria-label="Open Navigation Menu"
+          class="lg:hidden p-2 text-ink hover:text-brass transition-colors"
+        >
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.3" viewBox="0 0 24 24">
+            <line x1="3" y1="7" x2="21" y2="7" />
+            <line x1="3" y1="12" x2="21" y2="12" />
+            <line x1="8" y1="17" x2="21" y2="17" />
+          </svg>
+        </button>
+      </div>
+    </nav>
+  </header>
+
+  <!-- MOBILE FULLSCREEN WARM CREAM EDITORIAL MENU OVERLAY -->
+  <div
+    id="mobile-menu-overlay"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Mobile Navigation"
+    class="fixed inset-0 z-[80] bg-cream flex flex-col justify-between p-8 opacity-0 pointer-events-none transition-all duration-500"
+  >
+    <div class="flex items-center justify-between border-b hairline pb-6">
+      <span class="font-serif text-xl tracking-[0.24em] uppercase text-ink">Maison Élara</span>
+      <button
+        id="mobile-menu-close"
+        type="button"
+        aria-label="Close Navigation Menu"
+        class="p-2 text-ink hover:text-brass transition-colors"
+      >
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.3" viewBox="0 0 24 24">
+          <line x1="5" y1="5" x2="19" y2="19" />
+          <line x1="19" y1="5" x2="5" y2="19" />
+        </svg>
+      </button>
+    </div>
+
+    <nav class="flex flex-col gap-5 my-auto py-8">
+      <a href="#philosophy" class="mobile-nav-link font-serif text-4xl sm:text-5xl font-light text-ink hover:text-brass transition-colors">Philosophy</a>
+      <a href="#signature" class="mobile-nav-link font-serif text-4xl sm:text-5xl font-light text-ink hover:text-brass transition-colors">Signature</a>
+      <a href="#atmosphere" class="mobile-nav-link font-serif text-4xl sm:text-5xl font-light text-ink hover:text-brass transition-colors">Atmosphere</a>
+      <a href="#menu" class="mobile-nav-link font-serif text-4xl sm:text-5xl font-light text-ink hover:text-brass transition-colors">Menu</a>
+      <a href="#experiences" class="mobile-nav-link font-serif text-4xl sm:text-5xl font-light text-ink hover:text-brass transition-colors">Experiences</a>
+      <a href="#gallery" class="mobile-nav-link font-serif text-4xl sm:text-5xl font-light text-ink hover:text-brass transition-colors">Gallery</a>
+    </nav>
+
+    <div class="border-t hairline pt-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <p class="text-[11px] uppercase tracking-[0.24em] text-taupe">Paris &nbsp;•&nbsp; Geneva &nbsp;•&nbsp; Kyoto</p>
+      <a
+        href="#reservations"
+        class="mobile-nav-link inline-flex justify-center items-center px-8 py-3.5 bg-ink text-cream text-xs uppercase tracking-[0.22em]"
+      >
+        Reserve Your Table
+      </a>
+    </div>
+  </div>
+
+  <!-- 3. CINEMATIC 3D HERO SECTION (SUNLIT EDITORIAL AESTHETIC) -->
+  <section id="hero" class="relative w-full min-h-screen flex items-center overflow-hidden bg-cream">
+    <!-- Seamless Sunlit 3D WebGL Canvas -->
+    <div id="hero-3d-wrapper" class="absolute inset-0 z-0">
+      <canvas id="hero-canvas" class="webgl-canvas" aria-label="Sunlit 3D plated signature dish on warm travertine pedestal"></canvas>
+    </div>
+
+    <!-- High-Quality Static Fallback (If WebGL unsupported or reduced motion) -->
+    <div id="hero-fallback" class="hidden absolute inset-0 z-0">
+      <div class="w-full h-full grid grid-cols-1 lg:grid-cols-12">
+        <div class="hidden lg:block lg:col-span-5 bg-cream"></div>
+        <div
+          class="lg:col-span-7 bg-cover bg-center relative"
+          style="background-image: url('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=1800&q=85');"
+        >
+          <div class="absolute inset-0 bg-cream/65 lg:bg-gradient-to-r lg:from-cream lg:via-cream/35 lg:to-transparent"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Soft Sunlit Cream Gradient Veil for Crisp Typography Legibility -->
+    <div
+      class="absolute inset-0 z-[1] pointer-events-none"
+      style="background: linear-gradient(95deg, rgba(247,243,236,0.96) 0%, rgba(247,243,236,0.78) 40%, rgba(247,243,236,0.08) 72%, rgba(247,243,236,0) 100%);"
+    ></div>
+
+    <!-- Spacious Editorial Hero Typography -->
+    <div class="relative z-10 max-w-[1440px] w-full mx-auto px-6 md:px-12 pt-32 pb-24">
+      <div class="max-w-xl">
+        <p class="hero-fade hero-delay-1 text-[11px] uppercase tracking-[0.32em] text-brass mb-7 flex items-center gap-4">
+          <span class="w-9 h-[1px] bg-brass inline-block"></span>
+          Haute Gastronomie &nbsp;•&nbsp; Est. 2018
+        </p>
+
+        <h1 class="hero-fade hero-delay-2 font-serif text-5xl sm:text-7xl lg:text-[5.5rem] font-light tracking-[0.06em] text-ink leading-[0.96] uppercase">
+          Maison Élara
+        </h1>
+
+        <p class="hero-fade hero-delay-3 font-serif italic text-2xl sm:text-3xl md:text-[2.15rem] text-ink/90 font-light mt-7 leading-snug">
+          “An Artful Expression of Fine Dining.”
+        </p>
+
+        <p class="hero-fade hero-delay-4 text-sm sm:text-[15px] text-taupe font-light tracking-wide mt-5 max-w-md leading-relaxed">
+          Where culinary artistry meets extraordinary hospitality.
+        </p>
+
+        <!-- Refined Editorial CTAs -->
+        <div class="hero-fade hero-delay-5 flex flex-wrap items-center gap-4 sm:gap-5 mt-12">
+          <a
+            href="#reservations"
+            data-magnetic
+            data-cursor="interactive"
+            class="magnetic-btn inline-flex items-center gap-3 px-9 py-4 bg-ink text-cream text-[11px] uppercase tracking-[0.22em] hover:bg-brass transition-colors"
+          >
+            <span>Reserve Your Table</span>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.35" viewBox="0 0 24 24">
+              <path stroke-linecap="square" d="M5 12h14M13 6l6 6-6 6" />
+            </svg>
+          </a>
+
+          <a
+            href="#menu"
+            data-magnetic
+            data-cursor="interactive"
+            class="magnetic-btn inline-flex items-center gap-3 px-9 py-4 border border-ink/30 text-ink text-[11px] uppercase tracking-[0.22em] hover:border-brass hover:text-brass transition-colors"
+          >
+            <span>Discover Our Menu</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Subtle Scene Caption -->
+    <div class="hidden md:flex absolute bottom-10 right-12 z-10 items-center gap-3 text-[10px] uppercase tracking-[0.26em] text-taupe/80 pointer-events-none">
+      <span class="w-1.5 h-1.5 rounded-full bg-brass"></span>
+      <span>Interactive Sunlit Table Study</span>
+    </div>
+
+    <!-- Minimal Scroll Indicator -->
+    <a
+      href="#philosophy"
+      data-cursor="interactive"
+      aria-label="Scroll to Philosophy"
+      class="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-3 text-[10px] uppercase tracking-[0.28em] text-taupe hover:text-brass transition-colors"
+    >
+      <span>Scroll</span>
+      <span class="w-[1px] h-12 bg-stone relative overflow-hidden">
+        <span class="absolute inset-0 bg-brass scroll-line-anim"></span>
+      </span>
+    </a>
+  </section>
+
+  <!-- 4. SCROLL STORYTELLING (EDITORIAL PHILOSOPHY) -->
+  <section id="philosophy" class="relative py-28 md:py-40 bg-linen border-t hairline">
+    <div class="max-w-[1440px] mx-auto px-6 md:px-12">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-14 lg:gap-20 items-start">
+        <!-- Left: Sticky Gallery Photography Column -->
+        <div class="lg:col-span-5 lg:sticky lg:top-28">
+          <div class="relative aspect-[4/5] w-full overflow-hidden border hairline bg-cream">
+            <img
+              id="story-img-0"
+              src="https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&w=1200&q=85"
+              alt="Minimalist seasonal fine-dining composition"
+              class="story-img absolute inset-0 w-full h-full object-cover transition-all duration-1000 opacity-100 scale-100"
+            />
+            <img
+              id="story-img-1"
+              src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=1200&q=85"
+              alt="Culinary craft and plating precision"
+              class="story-img absolute inset-0 w-full h-full object-cover transition-all duration-1000 opacity-0 scale-105"
+            />
+            <img
+              id="story-img-2"
+              src="https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?auto=format&fit=crop&w=1200&q=85"
+              alt="Serene sunlit fine-dining salon interior"
+              class="story-img absolute inset-0 w-full h-full object-cover transition-all duration-1000 opacity-0 scale-105"
+            />
+          </div>
+
+          <!-- Editorial Plate Caption Beneath Image -->
+          <div class="flex items-baseline justify-between mt-5 pt-4 border-t hairline">
+            <p id="story-caption" class="font-serif italic text-xl text-ink">01 / Philosophy</p>
+            <span id="story-numeral" class="text-[11px] uppercase tracking-[0.26em] text-brass">Plate I of III</span>
+          </div>
+        </div>
+
+        <!-- Right: Spacious Editorial Narrative Chapters -->
+        <div class="lg:col-span-7 flex flex-col divide-y divide-stone">
+          <!-- 01 / Philosophy -->
+          <article class="story-chapter pb-24 lg:pb-32 pt-2 reveal-up" data-chapter="0" data-caption="01 / Philosophy" data-numeral="Plate I of III">
+            <div class="flex items-baseline gap-5 mb-6">
+              <span class="font-serif text-5xl sm:text-6xl font-light text-brass/70 leading-none">01</span>
+              <p class="text-[11px] uppercase tracking-[0.28em] text-taupe">Philosophy</p>
+            </div>
+            <h2 class="font-serif text-4xl sm:text-5xl font-light text-ink mb-9 leading-tight">
+              Quiet Restraint &amp; Clarity
+            </h2>
+            <blockquote class="font-serif italic text-2xl sm:text-3xl text-ink/90 font-light leading-relaxed border-l border-brass pl-7 mb-9">
+              “We believe true luxury is felt in what is omitted—leaving only the purest dialogue between ingredient, light, and unhurried conversation.”
+            </blockquote>
+            <p class="text-sm sm:text-[15px] text-taupe font-light leading-relaxed mb-6 max-w-xl">
+              Conceived as a serene culinary gallery, Maison Élara strips away the theatrical noise of traditional dining. Every surface—from raw limewash plaster to matte bone porcelain—exists to frame the quiet drama of the seasonal plate.
+            </p>
+            <p class="text-sm sm:text-[15px] text-taupe font-light leading-relaxed max-w-xl">
+              Each tasting menu unfolds like a monograph in nine chapters, shaped by the rhythm of coastal tides, alpine harvests, and cellar vintages matured in silence.
+            </p>
+          </article>
+
+          <!-- 02 / Terroir & Craft -->
+          <article class="story-chapter py-24 lg:py-32 reveal-up" data-chapter="1" data-caption="02 / Terroir & Craft" data-numeral="Plate II of III">
+            <div class="flex items-baseline gap-5 mb-6">
+              <span class="font-serif text-5xl sm:text-6xl font-light text-brass/70 leading-none">02</span>
+              <p class="text-[11px] uppercase tracking-[0.28em] text-taupe">Terroir &amp; Craft</p>
+            </div>
+            <h2 class="font-serif text-4xl sm:text-5xl font-light text-ink mb-9 leading-tight">
+              Provenance Distilled
+            </h2>
+            <blockquote class="font-serif italic text-2xl sm:text-3xl text-ink/90 font-light leading-relaxed border-l border-brass pl-7 mb-9">
+              “A single drop of seventy-two-hour reduction carries the memory of the soil, the patience of the grower, and the discipline of the flame.”
+            </blockquote>
+            <p class="text-sm sm:text-[15px] text-taupe font-light leading-relaxed mb-8 max-w-xl">
+              Under Executive Chef Henri Delacroix, our kitchen pairs classical French saucier architecture with minimalist precision. Morning harvests arrive directly from partner estates in Brittany, Burgundy, and Kyoto.
+            </p>
+            <div class="grid grid-cols-3 gap-6 pt-8 border-t hairline max-w-xl">
+              <div>
+                <p class="font-serif text-3xl sm:text-4xl font-light text-ink">3</p>
+                <p class="text-[10px] uppercase tracking-[0.22em] text-taupe mt-1">Michelin Stars</p>
+              </div>
+              <div>
+                <p class="font-serif text-3xl sm:text-4xl font-light text-ink">72h</p>
+                <p class="text-[10px] uppercase tracking-[0.22em] text-taupe mt-1">Artisanal Jus</p>
+              </div>
+              <div>
+                <p class="font-serif text-3xl sm:text-4xl font-light text-ink">1,400</p>
+                <p class="text-[10px] uppercase tracking-[0.22em] text-taupe mt-1">Cellar Labels</p>
+              </div>
+            </div>
+          </article>
+
+          <!-- 03 / The Ritual -->
+          <article class="story-chapter pt-24 lg:pt-32 pb-6 reveal-up" data-chapter="2" data-caption="03 / The Ritual" data-numeral="Plate III of III">
+            <div class="flex items-baseline gap-5 mb-6">
+              <span class="font-serif text-5xl sm:text-6xl font-light text-brass/70 leading-none">03</span>
+              <p class="text-[11px] uppercase tracking-[0.28em] text-taupe">The Ritual</p>
+            </div>
+            <h2 class="font-serif text-4xl sm:text-5xl font-light text-ink mb-9 leading-tight">
+              Unhurried Hospitality
+            </h2>
+            <blockquote class="font-serif italic text-2xl sm:text-3xl text-ink/90 font-light leading-relaxed border-l border-brass pl-7 mb-9">
+              “Hospitality at its finest is nearly invisible—a choreographed calm that invites time to pause at the threshold.”
+            </blockquote>
+            <p class="text-sm sm:text-[15px] text-taupe font-light leading-relaxed max-w-xl">
+              From hand-pressed Belgian linen and brushed-brass flatware to our sommelier’s tableside decanting ritual, every gesture is calibrated to warmth, grace, and effortless serenity.
+            </p>
+          </article>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. INTERACTIVE SIGNATURE DISHES -->
+  <section id="signature" class="relative py-28 md:py-40 bg-cream border-t hairline">
+    <div class="max-w-[1440px] mx-auto px-6 md:px-12">
+      <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-8 mb-16 md:mb-24 reveal-up">
+        <div>
+          <p class="text-[11px] uppercase tracking-[0.3em] text-brass mb-4">Les Créations Emblématiques</p>
+          <h2 class="font-serif text-4xl sm:text-5xl lg:text-6xl font-light text-ink">
+            Signature Dishes
+          </h2>
+        </div>
+        <p class="text-sm text-taupe font-light max-w-md leading-relaxed">
+          Four emblematic compositions from the current season. Select any dish to curate your personal Tasting Selection prior to arrival.
+        </p>
+      </div>
+
+      <div id="signature-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8 lg:gap-10">
+        <!-- Rendered via JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. INTERACTIVE 3D RESTAURANT ATMOSPHERE SHOWCASE -->
+  <section id="atmosphere" class="relative py-28 md:py-40 bg-linen border-t hairline">
+    <div class="max-w-[1440px] mx-auto px-6 md:px-12">
+      <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-8 mb-14 reveal-up">
+        <div>
+          <p class="text-[11px] uppercase tracking-[0.3em] text-brass mb-4">L’Espace Architectural</p>
+          <h2 class="font-serif text-4xl sm:text-5xl lg:text-6xl font-light text-ink">
+            The Sunlit Salon
+          </h2>
+        </div>
+        <p class="text-sm text-taupe font-light max-w-md leading-relaxed">
+          Drag across the architectural study below or shift between our three natural lighting moods—from morning sunlight across travertine to intimate evening candlelight.
+        </p>
+      </div>
+
+      <!-- 3D Architectural Dining Salon Container -->
+      <div class="relative w-full h-[540px] sm:h-[620px] lg:h-[680px] border hairline bg-cream overflow-hidden reveal-up">
+        <canvas
+          id="atmosphere-canvas"
+          class="webgl-canvas cursor-grab active:cursor-grabbing"
+          aria-label="Interactive 3D architectural dining salon at Maison Élara"
+        ></canvas>
+
+        <!-- Fallback if WebGL unavailable -->
+        <div
+          id="atmosphere-fallback"
+          class="hidden absolute inset-0 bg-cover bg-center"
+          style="background-image: url('https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?auto=format&fit=crop&w=1800&q=85');"
+        >
+          <div class="absolute inset-0 bg-cream/35"></div>
+        </div>
+
+        <!-- Top Left Active Mood Readout -->
+        <div class="absolute top-6 left-6 z-10 bg-cream/90 border hairline px-5 py-3 pointer-events-none">
+          <p class="text-[10px] uppercase tracking-[0.26em] text-brass">Architectural Mood</p>
+          <p id="atmosphere-view-title" class="font-serif text-xl text-ink mt-0.5">Morning Sunlit Salon</p>
+        </div>
+
+        <!-- Top Right Interaction Cue -->
+        <div class="hidden sm:flex absolute top-6 right-6 z-10 items-center gap-2 bg-cream/90 border hairline px-4 py-2 text-[10px] uppercase tracking-[0.22em] text-taupe pointer-events-none">
+          <svg class="w-3.5 h-3.5 text-brass" fill="none" stroke="currentColor" stroke-width="1.4" viewBox="0 0 24 24">
+            <path stroke-linecap="square" d="M8 7l-5 5 5 5M16 7l5 5-5 5" />
+          </svg>
+          <span>Drag to Explore</span>
+        </div>
+
+        <!-- Bottom Lighting & Camera Preset Controls -->
+        <div class="absolute bottom-6 left-6 right-6 z-10 flex flex-col lg:flex-row lg:items-end justify-between gap-4">
+          <div class="flex flex-wrap gap-2.5" role="tablist" aria-label="Salon Lighting Presets">
+            <button
+              type="button"
+              data-view="morning"
+              data-cursor="interactive"
+              class="atmosphere-preset-btn px-5 py-3 text-[11px] uppercase tracking-[0.2em] border border-ink bg-ink text-cream transition-all duration-300"
+            >
+              Morning Sunlit Salon
+            </button>
+            <button
+              type="button"
+              data-view="golden"
+              data-cursor="interactive"
+              class="atmosphere-preset-btn px-5 py-3 text-[11px] uppercase tracking-[0.2em] border hairline bg-cream/92 text-ink hover:border-brass transition-all duration-300"
+            >
+              Golden Hour Table
+            </button>
+            <button
+              type="button"
+              data-view="evening"
+              data-cursor="interactive"
+              class="atmosphere-preset-btn px-5 py-3 text-[11px] uppercase tracking-[0.2em] border hairline bg-cream/92 text-ink hover:border-brass transition-all duration-300"
+            >
+              Evening Candlelight
+            </button>
+          </div>
+
+          <p id="atmosphere-view-desc" class="text-xs text-ink/85 bg-cream/92 border hairline px-5 py-3 max-w-md font-light leading-relaxed">
+            Crisp architectural daylight streaming across limewash plaster arches, honed travertine, and fresh linen.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. EDITORIAL MAGAZINE MENU INTERFACE -->
+  <section id="menu" class="relative py-28 md:py-40 bg-cream border-t hairline">
+    <div class="max-w-[1440px] mx-auto px-6 md:px-12">
+      <!-- Centered Print-Magazine Header -->
+      <div class="text-center max-w-2xl mx-auto mb-16 reveal-up">
+        <p class="text-[11px] uppercase tracking-[0.32em] text-brass mb-4">La Carte Saisonnière</p>
+        <h2 class="font-serif text-4xl sm:text-5xl lg:text-6xl font-light text-ink">
+          Culinary Editorial
+        </h2>
+        <p class="text-sm text-taupe font-light mt-5 leading-relaxed">
+          Printed fresh each morning. Filter by course or dietary preference and compose your Tasting Selection to share with our maître d’hôtel.
+        </p>
+      </div>
+
+      <!-- Horizontal Category Tabs -->
+      <div class="border-b hairline mb-8 overflow-x-auto">
+        <div id="menu-category-tabs" class="flex items-center justify-start md:justify-center gap-6 sm:gap-10 min-w-max pb-4" role="tablist">
+          <!-- Rendered via JS -->
+        </div>
+      </div>
+
+      <!-- Dietary Filters -->
+      <div class="flex flex-wrap items-center justify-center gap-3 mb-16" role="group" aria-label="Dietary Filters">
+        <button type="button" data-filter="all" data-cursor="interactive" class="menu-filter-btn px-4 py-2 text-[11px] uppercase tracking-[0.2em] border border-ink bg-ink text-cream transition-all">
+          All Dishes
+        </button>
+        <button type="button" data-filter="recommended" data-cursor="interactive" class="menu-filter-btn px-4 py-2 text-[11px] uppercase tracking-[0.2em] border hairline text-taupe hover:text-ink hover:border-brass transition-all">
+          Chef’s Recommended
+        </button>
+        <button type="button" data-filter="vegetarian" data-cursor="interactive" class="menu-filter-btn px-4 py-2 text-[11px] uppercase tracking-[0.2em] border hairline text-taupe hover:text-ink hover:border-brass transition-all">
+          Vegetarian
+        </button>
+        <button type="button" data-filter="gf" data-cursor="interactive" class="menu-filter-btn px-4 py-2 text-[11px] uppercase tracking-[0.2em] border hairline text-taupe hover:text-ink hover:border-brass transition-all">
+          Gluten-Free
+        </button>
+      </div>
+
+      <!-- Dynamic Magazine Menu Area -->
+      <div id="menu-display-area" class="transition-opacity duration-300">
+        <!-- Rendered via JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- 8. LUXURY SPECIAL EXPERIENCES -->
+  <section id="experiences" class="relative py-28 md:py-40 bg-linen border-t hairline">
+    <div class="max-w-[1440px] mx-auto px-6 md:px-12">
+      <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-8 mb-16 md:mb-20 reveal-up">
+        <div>
+          <p class="text-[11px] uppercase tracking-[0.3em] text-brass mb-4">Invitations Privées</p>
+          <h2 class="font-serif text-4xl sm:text-5xl lg:text-6xl font-light text-ink">
+            Curated Experiences
+          </h2>
+        </div>
+        <p class="text-sm text-taupe font-light max-w-md leading-relaxed">
+          Bespoke gatherings tailored by our concierge—from nine-course seasonal progressions to private sunlit salon celebrations.
+        </p>
+      </div>
+
+      <div id="experiences-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-8">
+        <!-- Rendered via JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- 9. ASYMMETRIC EDITORIAL GALLERY & LIGHTBOX -->
+  <section id="gallery" class="relative py-28 md:py-40 bg-cream border-t hairline">
+    <div class="max-w-[1440px] mx-auto px-6 md:px-12">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16 md:mb-20 reveal-up">
+        <div>
+          <p class="text-[11px] uppercase tracking-[0.3em] text-brass mb-4">Monographie Visuelle</p>
+          <h2 class="font-serif text-4xl sm:text-5xl lg:text-6xl font-light text-ink">
+            The Gallery
+          </h2>
+        </div>
+        <p class="text-[11px] uppercase tracking-[0.22em] text-taupe">
+          Select any plate to inspect fullscreen
+        </p>
+      </div>
+
+      <div id="gallery-grid" class="grid grid-cols-1 md:grid-cols-12 gap-x-8 gap-y-12">
+        <!-- Rendered via JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- 10. CONCIERGE RESERVATION EXPERIENCE -->
+  <section id="reservations" class="relative py-28 md:py-40 bg-linen border-t hairline">
+    <div class="max-w-[1440px] mx-auto px-6 md:px-12">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-20 items-start">
+        <!-- Left Concierge Column -->
+        <div class="lg:col-span-5 reveal-up">
+          <p class="text-[11px] uppercase tracking-[0.3em] text-brass mb-4">Conciergerie</p>
+          <h2 class="font-serif text-4xl sm:text-5xl lg:text-6xl font-light text-ink leading-tight">
+            Reserve Your Table
+          </h2>
+          <p class="text-sm sm:text-[15px] text-taupe font-light mt-6 leading-relaxed">
+            Tables are released sixty days in advance. Every reservation is personally reviewed by our maître d’hôtel to accommodate dietary preferences, cellar requests, and celebratory moments.
+          </p>
+
+          <div class="mt-12 space-y-8 border-t hairline pt-8">
+            <div>
+              <p class="text-[10px] uppercase tracking-[0.26em] text-brass mb-2">Service Hours</p>
+              <p class="font-serif text-2xl text-ink font-light">Tuesday – Sunday &nbsp;|&nbsp; 12:00 – 15:00 &amp; 18:00 – 23:00</p>
+              <p class="text-xs text-taupe mt-1">Closed Mondays for culinary research &amp; estate visits.</p>
+            </div>
+            <div>
+              <p class="text-[10px] uppercase tracking-[0.26em] text-brass mb-2">Paris Flagship</p>
+              <p class="font-serif text-2xl text-ink font-light">18 Avenue Montaigne, 75008 Paris</p>
+              <p class="text-xs text-taupe mt-1">Private courtyard arrival &amp; valet service.</p>
+            </div>
+            <div>
+              <p class="text-[10px] uppercase tracking-[0.26em] text-brass mb-2">Direct Concierge</p>
+              <p class="font-serif text-2xl text-ink font-light">+33 1 42 68 90 14 &nbsp;•&nbsp; concierge@maisonelara.com</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Spacious Editorial Booking Form -->
+        <div class="lg:col-span-7 bg-cream border hairline p-8 sm:p-12 lg:p-14 reveal-up">
+          <form id="reservation-form" novalidate class="space-y-9">
+            <!-- Row 1: Date & Guests -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-9">
+              <div class="editorial-field">
+                <label for="res-date" class="block text-[10px] uppercase tracking-[0.24em] text-brass mb-2">
+                  Preferred Date *
+                </label>
+                <input id="res-date" name="date" type="date" required class="editorial-input" />
+                <p id="err-date" class="text-[11px] text-brass mt-2 hidden"></p>
+              </div>
+
+              <div class="editorial-field">
+                <label for="res-guests" class="block text-[10px] uppercase tracking-[0.24em] text-brass mb-2">
+                  Guests *
+                </label>
+                <select id="res-guests" name="guests" class="editorial-input">
+                  <option value="1 Guest">1 Guest</option>
+                  <option value="2 Guests" selected>2 Guests</option>
+                  <option value="3 Guests">3 Guests</option>
+                  <option value="4 Guests">4 Guests</option>
+                  <option value="5 Guests">5 Guests</option>
+                  <option value="6 Guests">6 Guests</option>
+                  <option value="8 Guests">8 Guests</option>
+                  <option value="10+ Guests (Private Salon)">10+ Guests (Private Salon)</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Row 2: Time Slots -->
+            <div>
+              <span class="block text-[10px] uppercase tracking-[0.24em] text-brass mb-3">
+                Seating Time *
+              </span>
+              <div id="time-slots-grid" class="grid grid-cols-4 sm:grid-cols-8 gap-2">
+                <!-- Rendered via JS -->
+              </div>
+              <input type="hidden" id="res-time" name="time" value="19:30" />
+            </div>
+
+            <!-- Row 3: Dining Preference & Experience -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-9">
+              <div class="editorial-field">
+                <label for="res-seating" class="block text-[10px] uppercase tracking-[0.24em] text-brass mb-2">
+                  Dining Preference
+                </label>
+                <select id="res-seating" name="seating" class="editorial-input">
+                  <option value="Main Sunlit Salon">Main Sunlit Salon</option>
+                  <option value="Chef's Counter">Chef’s Counter</option>
+                  <option value="Private Alcove">Private Alcove</option>
+                  <option value="Garden Terrace">Garden Terrace</option>
+                </select>
+              </div>
+
+              <div class="editorial-field">
+                <label for="res-experience" class="block text-[10px] uppercase tracking-[0.24em] text-brass mb-2">
+                  Curated Experience
+                </label>
+                <select id="res-experience" name="experience" class="editorial-input">
+                  <option value="À La Carte Dining">À La Carte Dining</option>
+                  <option value="Chef's Tasting Menu">Chef’s Tasting Menu ($295)</option>
+                  <option value="Couple's Dining">Couple’s Dining ($540)</option>
+                  <option value="Private Salon">Private Salon ($2,400)</option>
+                  <option value="Weekend Gastronomy">Weekend Gastronomy ($380)</option>
+                  <option value="Anniversary Celebrations">Anniversary Celebrations ($680)</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Row 4: Full Name & Email -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-9">
+              <div class="editorial-field">
+                <label for="res-name" class="block text-[10px] uppercase tracking-[0.24em] text-brass mb-2">
+                  Full Name *
+                </label>
+                <input id="res-name" name="name" type="text" required placeholder="Camille Laurent" class="editorial-input" />
+                <p id="err-name" class="text-[11px] text-brass mt-2 hidden"></p>
+              </div>
+
+              <div class="editorial-field">
+                <label for="res-email" class="block text-[10px] uppercase tracking-[0.24em] text-brass mb-2">
+                  Email Address *
+                </label>
+                <input id="res-email" name="email" type="email" required placeholder="camille@domain.com" class="editorial-input" />
+                <p id="err-email" class="text-[11px] text-brass mt-2 hidden"></p>
+              </div>
+            </div>
+
+            <!-- Row 5: Phone & Special Requests -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-9">
+              <div class="editorial-field">
+                <label for="res-phone" class="block text-[10px] uppercase tracking-[0.24em] text-brass mb-2">
+                  Telephone *
+                </label>
+                <input id="res-phone" name="phone" type="tel" required placeholder="+33 6 12 34 56 78" class="editorial-input" />
+                <p id="err-phone" class="text-[11px] text-brass mt-2 hidden"></p>
+              </div>
+
+              <div class="editorial-field">
+                <label for="res-notes" class="block text-[10px] uppercase tracking-[0.24em] text-brass mb-2">
+                  Special Requests
+                </label>
+                <input id="res-notes" name="notes" type="text" placeholder="Allergies, vintage notes, celebration..." class="editorial-input" />
+              </div>
+            </div>
+
+            <!-- Submit Bar -->
+            <div class="pt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-5">
+              <p class="text-[11px] text-taupe font-light">
+                Saved instantly to your Guest Dossier for effortless management.
+              </p>
+              <button
+                id="res-submit-btn"
+                type="submit"
+                data-magnetic
+                data-cursor="interactive"
+                class="magnetic-btn px-10 py-4 bg-ink text-cream text-[11px] uppercase tracking-[0.24em] hover:bg-brass transition-colors disabled:opacity-50"
+              >
+                Confirm Reservation
+              </button>
+            </div>
+          </form>
+
+          <!-- Confirmation State -->
+          <div id="reservation-confirmation" class="hidden py-6 space-y-8">
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 border border-brass flex items-center justify-center text-brass">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.4" viewBox="0 0 24 24">
+                  <path stroke-linecap="square" d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <div>
+                <p class="text-[10px] uppercase tracking-[0.28em] text-brass">Reservation Confirmed</p>
+                <h3 class="font-serif text-3xl text-ink mt-1">We Look Forward to Welcoming You</h3>
+              </div>
+            </div>
+
+            <div class="border-y hairline py-7 grid grid-cols-2 sm:grid-cols-3 gap-6">
+              <div>
+                <p class="text-[10px] uppercase tracking-[0.22em] text-taupe">Reference</p>
+                <p id="conf-code" class="font-serif text-2xl text-brass mt-1"></p>
+              </div>
+              <div>
+                <p class="text-[10px] uppercase tracking-[0.22em] text-taupe">Date &amp; Time</p>
+                <p id="conf-datetime" class="font-serif text-xl text-ink mt-1"></p>
+              </div>
+              <div>
+                <p class="text-[10px] uppercase tracking-[0.22em] text-taupe">Party &amp; Salon</p>
+                <p id="conf-seating" class="font-serif text-xl text-ink mt-1"></p>
+              </div>
+              <div class="col-span-2 sm:col-span-3">
+                <p class="text-[10px] uppercase tracking-[0.22em] text-taupe">Experience</p>
+                <p id="conf-experience" class="font-serif text-xl text-ink mt-1"></p>
+              </div>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-4">
+              <button
+                id="view-in-account-btn"
+                type="button"
+                data-cursor="interactive"
+                class="px-7 py-3.5 bg-ink text-cream text-[11px] uppercase tracking-[0.22em] hover:bg-brass transition-colors"
+              >
+                Open Guest Dossier
+              </button>
+              <button
+                id="new-reservation-btn"
+                type="button"
+                data-cursor="interactive"
+                class="px-7 py-3.5 border hairline text-ink text-[11px] uppercase tracking-[0.22em] hover:border-brass transition-colors"
+              >
+                New Reservation
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 11. SPACIOUS EDITORIAL FOOTER -->
+  <footer class="bg-cream border-t hairline pt-24 pb-12">
+    <div class="max-w-[1440px] mx-auto px-6 md:px-12">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 pb-20 border-b hairline">
+        <!-- Tagline & Newsletter -->
+        <div class="lg:col-span-5">
+          <p class="font-serif italic text-2xl sm:text-3xl text-ink font-light max-w-md leading-snug">
+            “Where culinary artistry meets extraordinary hospitality.”
+          </p>
+          <p class="text-[10px] uppercase tracking-[0.28em] text-brass mt-9 mb-4">Seasonal Monograph &amp; Cellar Letters</p>
+          <form id="newsletter-form" class="editorial-field flex items-stretch max-w-md">
+            <input
+              id="newsletter-email"
+              type="email"
+              required
+              placeholder="Enter your email address"
+              aria-label="Email address for newsletter"
+              class="editorial-input pr-4"
+            />
+            <button
+              type="submit"
+              data-cursor="interactive"
+              class="px-4 text-[11px] uppercase tracking-[0.24em] text-ink hover:text-brass transition-colors shrink-0 border-b hairline"
+            >
+              Subscribe
+            </button>
+          </form>
+          <p id="newsletter-feedback" class="text-xs text-brass mt-3 hidden">
+            Thank you. Your subscription to the Maison Élara seasonal letter is confirmed.
+          </p>
+        </div>
+
+        <!-- Navigation -->
+        <div class="lg:col-span-2">
+          <p class="text-[10px] uppercase tracking-[0.28em] text-brass mb-5">Navigation</p>
+          <ul class="space-y-3 text-sm text-taupe font-light">
+            <li><a href="#philosophy" class="hover:text-ink transition-colors">Philosophy</a></li>
+            <li><a href="#signature" class="hover:text-ink transition-colors">Signature</a></li>
+            <li><a href="#atmosphere" class="hover:text-ink transition-colors">Atmosphere</a></li>
+            <li><a href="#menu" class="hover:text-ink transition-colors">Menu</a></li>
+            <li><a href="#experiences" class="hover:text-ink transition-colors">Experiences</a></li>
+            <li><a href="#gallery" class="hover:text-ink transition-colors">Gallery</a></li>
+          </ul>
+        </div>
+
+        <!-- Address & Hours -->
+        <div class="lg:col-span-3">
+          <p class="text-[10px] uppercase tracking-[0.28em] text-brass mb-5">Address &amp; Hours</p>
+          <div class="space-y-4 text-sm text-taupe font-light">
+            <div>
+              <p class="text-ink font-normal">Paris Flagship</p>
+              <p class="text-xs mt-0.5">18 Avenue Montaigne, 75008 Paris</p>
+            </div>
+            <div>
+              <p class="text-ink font-normal">Lunch &amp; Dinner</p>
+              <p class="text-xs mt-0.5">Tue – Sun &nbsp;|&nbsp; 12:00 – 15:00 &amp; 18:00 – 23:00</p>
+            </div>
+            <div>
+              <p class="text-ink font-normal">Geneva &amp; Kyoto Salons</p>
+              <p class="text-xs mt-0.5">By Private Appointment</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Social & Reserve CTA -->
+        <div class="lg:col-span-2 flex flex-col justify-between items-start">
+          <div>
+            <p class="text-[10px] uppercase tracking-[0.28em] text-brass mb-5">Journal &amp; Social</p>
+            <ul class="space-y-3 text-sm text-taupe font-light">
+              <li><a href="#hero" class="hover:text-ink transition-colors">Instagram</a></li>
+              <li><a href="#hero" class="hover:text-ink transition-colors">Michelin Guide</a></li>
+              <li><a href="#hero" class="hover:text-ink transition-colors">La Liste</a></li>
+            </ul>
+          </div>
+          <a
+            href="#reservations"
+            data-cursor="interactive"
+            class="mt-8 inline-flex items-center px-6 py-3 border border-ink text-[11px] uppercase tracking-[0.22em] text-ink hover:bg-ink hover:text-cream transition-all"
+          >
+            Reserve
+          </a>
+        </div>
+      </div>
+
+      <!-- Oversized Minimal Editorial Serif Wordmark -->
+      <div class="py-12 md:py-16 text-center overflow-hidden">
+        <p class="font-serif text-[clamp(3.1rem,11.5vw,10.5rem)] leading-[0.88] tracking-[0.12em] text-ink font-light uppercase select-none">
+          Maison Élara
+        </p>
+      </div>
+
+      <div class="border-t hairline pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-taupe tracking-wider">
+        <p>&copy; 2026 MAISON ÉLARA. All Rights Reserved.</p>
+        <p>Haute Gastronomie &nbsp;•&nbsp; Three Michelin Stars</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- WARM CREAM SLIDE-OVER TASTING SELECTION DRAWER -->
+  <div id="cart-drawer-backdrop" class="fixed inset-0 z-[85] bg-ink/30 opacity-0 pointer-events-none transition-opacity duration-400"></div>
+  <aside
+    id="cart-drawer"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Tasting Selection"
+    class="fixed top-0 right-0 bottom-0 z-[90] w-full max-w-md bg-cream border-l hairline translate-x-full transition-transform duration-500 flex flex-col"
+  >
+    <div class="p-7 border-b hairline flex items-center justify-between">
+      <div>
+        <p class="text-[10px] uppercase tracking-[0.28em] text-brass">Personal Curation</p>
+        <h3 class="font-serif text-3xl text-ink font-light mt-0.5">Tasting Selection</h3>
+      </div>
+      <button id="close-cart-btn" type="button" aria-label="Close Tasting Selection" class="p-2 text-taupe hover:text-ink transition-colors">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.35" viewBox="0 0 24 24">
+          <line x1="5" y1="5" x2="19" y2="19" />
+          <line x1="19" y1="5" x2="5" y2="19" />
+        </svg>
+      </button>
+    </div>
+
+    <div id="cart-items-container" class="flex-1 overflow-y-auto p-7 space-y-6">
+      <!-- Dynamic items -->
+    </div>
+
+    <div class="p-7 border-t hairline bg-linen space-y-5">
+      <div class="flex items-center justify-between">
+        <span class="text-[11px] uppercase tracking-[0.22em] text-taupe">Estimated Total</span>
+        <span id="cart-total" class="font-serif text-3xl text-ink font-light">$0</span>
+      </div>
+      <button
+        id="attach-tasting-btn"
+        type="button"
+        data-cursor="interactive"
+        class="w-full py-4 bg-ink text-cream text-[11px] uppercase tracking-[0.22em] hover:bg-brass transition-colors"
+      >
+        Carry Selection to Reservation
+      </button>
+    </div>
+  </aside>
+
+  <!-- GUEST DOSSIER MODAL (SAVED RESERVATIONS) -->
+  <div
+    id="account-modal"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Guest Dossier"
+    class="fixed inset-0 z-[90] flex items-center justify-center p-4 sm:p-6 bg-ink/40 opacity-0 pointer-events-none transition-opacity duration-400"
+  >
+    <div class="w-full max-w-2xl bg-cream border hairline max-h-[86vh] flex flex-col overflow-hidden">
+      <div class="p-7 border-b hairline flex items-center justify-between bg-linen">
+        <div>
+          <p class="text-[10px] uppercase tracking-[0.28em] text-brass">Guest Dossier</p>
+          <h3 class="font-serif text-3xl text-ink font-light mt-0.5">Your Reservations</h3>
+        </div>
+        <button id="close-account-btn" type="button" aria-label="Close Guest Dossier" class="p-2 text-taupe hover:text-ink transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.35" viewBox="0 0 24 24">
+            <line x1="5" y1="5" x2="19" y2="19" />
+            <line x1="19" y1="5" x2="5" y2="19" />
+          </svg>
+        </button>
+      </div>
+
+      <div id="saved-reservations-list" class="p-7 overflow-y-auto space-y-5">
+        <!-- Dynamic reservations -->
+      </div>
+    </div>
+  </div>
+
+  <!-- FULLSCREEN GALLERY LIGHTBOX -->
+  <div
+    id="gallery-lightbox"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Gallery Lightbox"
+    class="fixed inset-0 z-[95] bg-cream/98 flex flex-col justify-between p-6 sm:p-10 opacity-0 pointer-events-none transition-opacity duration-400"
+  >
+    <div class="flex items-center justify-between border-b hairline pb-4">
+      <p id="lightbox-counter" class="text-[11px] uppercase tracking-[0.26em] text-brass">01 / 06</p>
+      <button id="lightbox-close" type="button" aria-label="Close Lightbox" class="p-2 text-ink hover:text-brass transition-colors">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.35" viewBox="0 0 24 24">
+          <line x1="5" y1="5" x2="19" y2="19" />
+          <line x1="19" y1="5" x2="5" y2="19" />
+        </svg>
+      </button>
+    </div>
+
+    <div class="relative flex-1 flex items-center justify-center my-6 min-h-0">
+      <button
+        id="lightbox-prev"
+        type="button"
+        aria-label="Previous Photograph"
+        class="absolute left-0 sm:left-4 z-10 p-3 border hairline bg-cream text-ink hover:border-brass hover:text-brass transition-colors"
+      >
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.35" viewBox="0 0 24 24">
+          <path stroke-linecap="square" d="M15 6l-6 6 6 6" />
+        </svg>
+      </button>
+
+      <img
+        id="lightbox-img"
+        src=""
+        alt=""
+        class="max-h-full max-w-full object-contain border hairline transition-opacity duration-300"
+      />
+
+      <button
+        id="lightbox-next"
+        type="button"
+        aria-label="Next Photograph"
+        class="absolute right-0 sm:right-4 z-10 p-3 border hairline bg-cream text-ink hover:border-brass hover:text-brass transition-colors"
+      >
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.35" viewBox="0 0 24 24">
+          <path stroke-linecap="square" d="M9 6l6 6-6 6" />
+        </svg>
+      </button>
+    </div>
+
+    <div class="text-center border-t hairline pt-4">
+      <p id="lightbox-caption" class="font-serif italic text-2xl text-ink font-light"></p>
+      <p id="lightbox-subcaption" class="text-[10px] uppercase tracking-[0.24em] text-taupe mt-1"></p>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       APPLICATION LOGIC & SUNLIT 3D WEBGL EXPERIENCES
+  ========================================================================== -->
+  <script>
+    (function () {
+      'use strict';
+
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      /* -----------------------------------------------------------------------
+         EDITORIAL DATA
+      ----------------------------------------------------------------------- */
+      const SIGNATURE_DISHES = [
+        {
+          id: 'sig-wagyu',
+          name: 'Miyazaki A5 Wagyu & Périgord Truffle',
+          description: 'Charcoal-seared tenderloin, seventy-two-hour marrow jus, smoked celeriac velvet, shaved winter truffle.',
+          price: 145,
+          dietary: ['Signature', 'GF'],
+          image: 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=900&q=85'
+        },
+        {
+          id: 'sig-lobster',
+          name: 'Brittany Blue Lobster & Champagne',
+          description: 'Butter-poached tail, vintage Champagne beurre blanc, finger lime pearls, wild fennel pollen.',
+          price: 118,
+          dietary: ['Signature', 'GF'],
+          image: 'https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&w=900&q=85'
+        },
+        {
+          id: 'sig-celeriac',
+          name: 'Heirloom Celeriac Mille-Feuille',
+          description: 'Salt-baked translucent ribbons, 36-month Comté emulsion, toasted hazelnut praline, golden chanterelles.',
+          price: 74,
+          dietary: ['Vegetarian', 'GF'],
+          image: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=900&q=85'
+        },
+        {
+          id: 'sig-guanaja',
+          name: 'Guanaja 70% & Smoked Gold Leaf',
+          description: 'Warm dark chocolate soufflé tart, Madagascar vanilla bean glacé, aged Armagnac caramel.',
+          price: 48,
+          dietary: ['Vegetarian'],
+          image: 'https://images.unsplash.com/photo-1551024601-bec78aea704b?auto=format&fit=crop&w=900&q=85'
+        }
+      ];
+
+      const MENU_CATEGORIES = [
+        'All',
+        'First Impressions',
+        'Sea & Coast',
+        'Land & Hearth',
+        'Sweet Finales',
+        'Cellar Pairings'
+      ];
+
+      const MENU_ITEMS = [
+        // First Impressions
+        {
+          id: 'm-1',
+          category: 'First Impressions',
+          name: 'Royal Oscietra Caviar & Buckwheat Blini',
+          description: '30g Oscietra served over mother-of-pearl with smoked Normandy crème fraîche and Meyer lemon zest.',
+          tastingNotes: 'Crystalline salinity balanced by warm toasted buckwheat and a silken mineral finish.',
+          pairing: 'Krug Grande Cuvée 171ème Édition',
+          price: 135,
+          recommended: true,
+          vegetarian: false,
+          gf: false,
+          image: 'https://images.unsplash.com/photo-1626200419199-391ae4be7a41?auto=format&fit=crop&w=1200&q=85'
+        },
+        {
+          id: 'm-2',
+          category: 'First Impressions',
+          name: 'Hokkaido Sea Urchin Royale',
+          description: 'Warm dashi custard, crisp nori tuile, pickled white asparagus, subtle yuzu kosho oil.',
+          price: 64,
+          recommended: false,
+          vegetarian: false,
+          gf: true
+        },
+        {
+          id: 'm-3',
+          category: 'First Impressions',
+          name: 'Salt-Roasted Ruby Beetroot Tartare',
+          description: 'Smoked Marcona almond cream, aged Modena balsamic pearls, garden shiso leaves.',
+          price: 52,
+          recommended: false,
+          vegetarian: true,
+          gf: true
+        },
+        {
+          id: 'm-4',
+          category: 'First Impressions',
+          name: 'Foie Gras Torchon Au Sauternes',
+          description: 'Poached spiced fig compote, warm laminated brioche, fleur de sel de Guérande.',
+          price: 68,
+          recommended: false,
+          vegetarian: false,
+          gf: false
+        },
+
+        // Sea & Coast
+        {
+          id: 'm-5',
+          category: 'Sea & Coast',
+          name: 'Line-Caught Wild Turbot & Vin Jaune',
+          description: 'Roasted on the bone with Jura morels, charred leek heart, and airy Vin Jaune sabayon.',
+          tastingNotes: 'Pearlescent flakes elevated by the oxidative walnut warmth of aged Jura Vin Jaune.',
+          pairing: 'Domaine Roulot Meursault 2019',
+          price: 112,
+          recommended: true,
+          vegetarian: false,
+          gf: true,
+          image: 'https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?auto=format&fit=crop&w=1200&q=85'
+        },
+        {
+          id: 'm-6',
+          category: 'Sea & Coast',
+          name: 'Brittany Blue Lobster Poached in Champagne',
+          description: 'Dom Pérignon beurre blanc, finger lime pearls, saffron fennel pollen, sea lettuce.',
+          price: 118,
+          recommended: false,
+          vegetarian: false,
+          gf: true
+        },
+        {
+          id: 'm-7',
+          category: 'Sea & Coast',
+          name: 'Hand-Dived Scallops & White Truffle',
+          description: 'Roasted cauliflower mousseline, brown butter caper emulsion, Alba truffle shavings.',
+          price: 88,
+          recommended: false,
+          vegetarian: false,
+          gf: true
+        },
+
+        // Land & Hearth
+        {
+          id: 'm-8',
+          category: 'Land & Hearth',
+          name: 'Miyazaki A5 Wagyu & Périgord Truffle',
+          description: 'Binchotan-seared tenderloin, 72-hour bone marrow reduction, smoked celeriac purée, pomme soufflée.',
+          tastingNotes: 'Effortless marbling met with deep hearth aromatics and fragrant black winter truffle.',
+          pairing: 'Château Margaux Premier Grand Cru Classé 2015',
+          price: 145,
+          recommended: true,
+          vegetarian: false,
+          gf: true,
+          image: 'https://images.unsplash.com/photo-1600891964092-4316c288032e?auto=format&fit=crop&w=1200&q=85'
+        },
+        {
+          id: 'm-9',
+          category: 'Land & Hearth',
+          name: 'Bresse Pigeon Roasted in Alpine Hay',
+          description: 'Wild blackberry reduction, caramelized endive, roasted salsify, juniper jus.',
+          price: 96,
+          recommended: false,
+          vegetarian: false,
+          gf: true
+        },
+        {
+          id: 'm-10',
+          category: 'Land & Hearth',
+          name: 'Heirloom Celeriac Mille-Feuille',
+          description: 'Salt-baked ribbons, 36-month Comté emulsion, winter chanterelles, black truffle jus.',
+          price: 74,
+          recommended: false,
+          vegetarian: true,
+          gf: true
+        },
+
+        // Sweet Finales
+        {
+          id: 'm-11',
+          category: 'Sweet Finales',
+          name: 'Valrhona Guanaja 70% & Smoked Gold Leaf',
+          description: 'Warm dark chocolate soufflé tart, smoked vanilla bean glacé, 25-year Armagnac caramel.',
+          tastingNotes: 'Single-origin bittersweet cocoa softened by whisper-light smoke and warm oak notes.',
+          pairing: 'Château d’Yquem 1er Cru Supérieur 2009',
+          price: 48,
+          recommended: true,
+          vegetarian: true,
+          gf: false,
+          image: 'https://images.unsplash.com/photo-1551024601-bec78aea704b?auto=format&fit=crop&w=1200&q=85'
+        },
+        {
+          id: 'm-12',
+          category: 'Sweet Finales',
+          name: 'Poached Comice Pear & Champagne Granite',
+          description: 'Green cardamom meringue, roasted chestnut mousse, wildflower honey tuile.',
+          price: 38,
+          recommended: false,
+          vegetarian: true,
+          gf: true
+        },
+        {
+          id: 'm-13',
+          category: 'Sweet Finales',
+          name: 'Affineur Chariot de Fromages',
+          description: 'Five seasonal raw-milk cheeses, walnut levain sourdough, orchard quince paste.',
+          price: 44,
+          recommended: false,
+          vegetarian: true,
+          gf: false
+        },
+
+        // Cellar Pairings
+        {
+          id: 'm-14',
+          category: 'Cellar Pairings',
+          name: 'Grand Cru Sommelier Progression (6 Pours)',
+          description: 'Curated by Head Sommelier Julien Moreau featuring library Burgundy, Champagne, and Bordeaux vintages.',
+          tastingNotes: 'Each vintage is decanted to exact cellar temperature and synchronized with the kitchen brigade.',
+          pairing: 'Designed for the Chef’s Tasting Menu',
+          price: 240,
+          recommended: true,
+          vegetarian: true,
+          gf: true,
+          image: 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?auto=format&fit=crop&w=1200&q=85'
+        },
+        {
+          id: 'm-15',
+          category: 'Cellar Pairings',
+          name: 'Botanical & Rare Tea Elixir Flight (Zero-Proof)',
+          description: 'Cold-brewed Gyokuro, verjus infusions, smoked oolong, and alpine botanicals.',
+          price: 115,
+          recommended: false,
+          vegetarian: true,
+          gf: true
+        }
+      ];
+
+      const EXPERIENCES = [
+        {
+          title: "Chef's Tasting Menu",
+          subtitle: 'Nine Seasonal Movements',
+          price: '$295 / guest',
+          desc: 'Our definitive culinary monograph celebrating peak micro-seasonal harvests with tableside finishes.',
+          span: 'lg:col-span-3',
+          image: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=1200&q=85'
+        },
+        {
+          title: "Couple's Dining",
+          subtitle: 'Private Alcove',
+          price: '$540 / couple',
+          desc: 'A quiet sunlit or candlelit alcove, welcome vintage Champagne, six courses, and seasonal botanical florals.',
+          span: 'lg:col-span-3',
+          image: 'https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?auto=format&fit=crop&w=1200&q=85'
+        },
+        {
+          title: 'Private Salon',
+          subtitle: 'Up to 10 Guests',
+          price: '$2,400 / salon',
+          desc: 'Acoustic privacy framed by limewash columns, dedicated sommelier, and letterpress keepsake menus.',
+          span: 'lg:col-span-2',
+          image: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1000&q=85'
+        },
+        {
+          title: 'Weekend Gastronomy',
+          subtitle: 'Saturday & Sunday',
+          price: '$380 / guest',
+          desc: 'Begins with a private cellar aperitif tour followed by seven courses and library-vintage tasting pours.',
+          span: 'lg:col-span-2',
+          image: 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?auto=format&fit=crop&w=1000&q=85'
+        },
+        {
+          title: 'Anniversary Celebrations',
+          subtitle: 'Bespoke Milestone',
+          price: '$680 / couple',
+          desc: 'Custom pastry sculpture, signed letterpress menu by Chef Delacroix, and Grand Cru Champagne service.',
+          span: 'lg:col-span-2',
+          image: 'https://images.unsplash.com/photo-1551024601-bec78aea704b?auto=format&fit=crop&w=1000&q=85'
+        }
+      ];
+
+      const GALLERY_ITEMS = [
+        {
+          src: 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1400&q=85',
+          caption: 'Miyazaki A5 Wagyu — Autumn Reduction',
+          sub: 'Plate 01 • Culinary Artistry',
+          span: 'md:col-span-7 aspect-[16/10]'
+        },
+        {
+          src: 'https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?auto=format&fit=crop&w=1200&q=85',
+          caption: 'Morning Light Across the Main Salon',
+          sub: 'Plate 02 • Architecture',
+          span: 'md:col-span-5 aspect-[4/3]'
+        },
+        {
+          src: 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?auto=format&fit=crop&w=1200&q=85',
+          caption: 'Grand Cru Cellar Reserve',
+          sub: 'Plate 03 • Sommelier Archive',
+          span: 'md:col-span-4 aspect-[4/5]'
+        },
+        {
+          src: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=1400&q=85',
+          caption: 'Seasonal Tasting Study',
+          sub: 'Plate 04 • The Kitchen Brigade',
+          span: 'md:col-span-4 aspect-[4/5]'
+        },
+        {
+          src: 'https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&w=1200&q=85',
+          caption: 'Brittany Blue Lobster & Champagne',
+          sub: 'Plate 05 • Coastal Provenance',
+          span: 'md:col-span-4 aspect-[4/5]'
+        },
+        {
+          src: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1600&q=85',
+          caption: 'Evening Candlelight Service',
+          sub: 'Plate 06 • Hospitality Ritual',
+          span: 'md:col-span-12 aspect-[21/9]'
+        }
+      ];
+
+      /* -----------------------------------------------------------------------
+         STATE MANAGEMENT
+      ----------------------------------------------------------------------- */
+      let cart = [];
+      let activeCategory = 'All';
+      let activeFilter = 'all';
+      let currentLightboxIdx = 0;
+
+      function loadReservations() {
+        try {
+          const raw = localStorage.getItem('maison_elara_editorial_reservations');
+          return raw ? JSON.parse(raw) : [];
+        } catch (e) {
+          return [];
+        }
+      }
+
+      function saveReservations(list) {
+        try {
+          localStorage.setItem('maison_elara_editorial_reservations', JSON.stringify(list));
+        } catch (e) {
+          // Storage unavailable
+        }
+      }
+
+      let reservations = loadReservations();
+
+      /* -----------------------------------------------------------------------
+         TOAST NOTIFICATION
+      ----------------------------------------------------------------------- */
+      let toastTimer = null;
+      function showToast(title, message) {
+        const toast = document.getElementById('editorial-toast');
+        document.getElementById('toast-title').textContent = title;
+        document.getElementById('toast-message').textContent = message;
+
+        toast.classList.remove('translate-y-12', 'opacity-0', 'pointer-events-none');
+        toast.classList.add('translate-y-0', 'opacity-100');
+
+        if (toastTimer) clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => {
+          toast.classList.add('translate-y-12', 'opacity-0', 'pointer-events-none');
+          toast.classList.remove('translate-y-0', 'opacity-100');
+        }, 3200);
+      }
+
+      /* -----------------------------------------------------------------------
+         SCROLL PROGRESS BAR & FLOATING NAVBAR TRANSITION
+      ----------------------------------------------------------------------- */
+      const progressBar = document.getElementById('scroll-progress-bar');
+      const navbar = document.getElementById('main-navbar');
+
+      function handleScroll() {
+        const scrollTop = window.scrollY;
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+        progressBar.style.width = `${Math.min(100, Math.max(0, progress))}%`;
+
+        if (scrollTop > 50) {
+          navbar.classList.add('bg-cream/95', 'backdrop-blur-md', 'border-stone');
+          navbar.classList.remove('border-transparent');
+        } else {
+          navbar.classList.remove('bg-cream/95', 'backdrop-blur-md', 'border-stone');
+          navbar.classList.add('border-transparent');
+        }
+      }
+      window.addEventListener('scroll', handleScroll, { passive: true });
+      handleScroll();
+
+      /* -----------------------------------------------------------------------
+         DESKTOP CURSOR RING & MAGNETIC CTAS
+      ----------------------------------------------------------------------- */
+      if (!prefersReducedMotion && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+        const cursor = document.getElementById('custom-cursor');
+        let cx = window.innerWidth / 2;
+        let cy = window.innerHeight / 2;
+        let tx = cx;
+        let ty = cy;
+
+        window.addEventListener('mousemove', (e) => {
+          tx = e.clientX;
+          ty = e.clientY;
+          cursor.style.opacity = '1';
+        }, { passive: true });
+
+        document.addEventListener('mouseleave', () => {
+          cursor.style.opacity = '0';
+        });
+
+        function animateCursor() {
+          cx += (tx - cx) * 0.18;
+          cy += (ty - cy) * 0.18;
+          cursor.style.left = `${cx}px`;
+          cursor.style.top = `${cy}px`;
+          requestAnimationFrame(animateCursor);
+        }
+        requestAnimationFrame(animateCursor);
+
+        document.addEventListener('mouseover', (e) => {
+          if (e.target.closest('[data-cursor="interactive"], a, button')) {
+            cursor.classList.add('cursor-active');
+          }
+        });
+        document.addEventListener('mouseout', (e) => {
+          if (e.target.closest('[data-cursor="interactive"], a, button')) {
+            cursor.classList.remove('cursor-active');
+          }
+        });
+
+        document.querySelectorAll('[data-magnetic]').forEach((btn) => {
+          btn.addEventListener('mousemove', (e) => {
+            const rect = btn.getBoundingClientRect();
+            const mx = (e.clientX - rect.left - rect.width / 2) * 0.16;
+            const my = (e.clientY - rect.top - rect.height / 2) * 0.16;
+            btn.style.transform = `translate(${mx}px, ${my}px)`;
+          });
+          btn.addEventListener('mouseleave', () => {
+            btn.style.transform = 'translate(0px, 0px)';
+          });
+        });
+      }
+
+      /* -----------------------------------------------------------------------
+         MOBILE FULLSCREEN OVERLAY MENU
+      ----------------------------------------------------------------------- */
+      const mobileOverlay = document.getElementById('mobile-menu-overlay');
+      function toggleMobileMenu(open) {
+        if (open) {
+          mobileOverlay.classList.remove('opacity-0', 'pointer-events-none');
+          mobileOverlay.classList.add('opacity-100');
+          document.body.style.overflow = 'hidden';
+        } else {
+          mobileOverlay.classList.add('opacity-0', 'pointer-events-none');
+          mobileOverlay.classList.remove('opacity-100');
+          document.body.style.overflow = '';
+        }
+      }
+      document.getElementById('mobile-menu-open').addEventListener('click', () => toggleMobileMenu(true));
+      document.getElementById('mobile-menu-close').addEventListener('click', () => toggleMobileMenu(false));
+      document.querySelectorAll('.mobile-nav-link').forEach((l) => l.addEventListener('click', () => toggleMobileMenu(false)));
+
+      /* -----------------------------------------------------------------------
+         SUBTLE 3D TILT FOR EDITORIAL CARDS
+      ----------------------------------------------------------------------- */
+      function attachTiltEffect(el) {
+        if (prefersReducedMotion) return;
+        el.addEventListener('mousemove', (e) => {
+          const rect = el.getBoundingClientRect();
+          const x = (e.clientX - rect.left) / rect.width - 0.5;
+          const y = (e.clientY - rect.top) / rect.height - 0.5;
+          el.style.transform = `perspective(1100px) rotateX(${(-y * 4.5).toFixed(2)}deg) rotateY(${(x * 4.5).toFixed(2)}deg)`;
+        });
+        el.addEventListener('mouseleave', () => {
+          el.style.transform = 'perspective(1100px) rotateX(0deg) rotateY(0deg)';
+        });
+      }
+
+      /* -----------------------------------------------------------------------
+         RENDER SIGNATURE DISHES
+      ----------------------------------------------------------------------- */
+      function renderSignatureDishes() {
+        const grid = document.getElementById('signature-grid');
+        grid.innerHTML = SIGNATURE_DISHES.map((dish) => `
+          <article
+            data-cursor="interactive"
+            class="tilt-card group bg-cream border hairline hover:border-brass flex flex-col justify-between reveal-up"
+          >
+            <div>
+              <div class="relative aspect-[4/5] overflow-hidden bg-linen">
+                <img
+                  src="${dish.image}"
+                  alt="${dish.name}"
+                  loading="lazy"
+                  class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                />
+                <div class="absolute top-4 left-4 flex gap-2">
+                  ${dish.dietary.map(tag => `
+                    <span class="px-2.5 py-1 text-[9px] uppercase tracking-[0.22em] bg-cream/92 border hairline text-ink">
+                      ${tag}
+                    </span>
+                  `).join('')}
+                </div>
+              </div>
+
+              <div class="p-6 pb-4">
+                <div class="flex items-baseline justify-between gap-3">
+                  <h3 class="font-serif text-2xl font-light text-ink group-hover:text-brass transition-colors leading-snug">
+                    ${dish.name}
+                  </h3>
+                  <span class="font-serif text-2xl text-ink shrink-0">$${dish.price}</span>
+                </div>
+                <p class="text-xs text-taupe font-light mt-3 leading-relaxed">
+                  ${dish.description}
+                </p>
+              </div>
+            </div>
+
+            <div class="px-6 pb-6 pt-3">
+              <button
+                type="button"
+                data-add-cart="${dish.id}"
+                data-name="${dish.name.replace(/"/g, '&quot;')}"
+                data-price="${dish.price}"
+                class="w-full py-3 border hairline text-[10px] uppercase tracking-[0.24em] text-ink hover:bg-ink hover:text-cream hover:border-ink transition-all duration-300"
+              >
+                Add to Selection
+              </button>
+            </div>
+          </article>
+        `).join('');
+
+        grid.querySelectorAll('.tilt-card').forEach(attachTiltEffect);
+      }
+
+      /* -----------------------------------------------------------------------
+         RENDER EDITORIAL MAGAZINE MENU
+      ----------------------------------------------------------------------- */
+      function renderMenuTabs() {
+        const container = document.getElementById('menu-category-tabs');
+        container.innerHTML = MENU_CATEGORIES.map((cat) => {
+          const isActive = cat === activeCategory;
+          return `
+            <button
+              type="button"
+              role="tab"
+              aria-selected="${isActive}"
+              data-category="${cat}"
+              data-cursor="interactive"
+              class="relative pb-2 text-xs sm:text-[13px] uppercase tracking-[0.22em] transition-colors ${
+                isActive ? 'text-ink font-medium' : 'text-taupe hover:text-ink'
+              }"
+            >
+              ${cat}
+              <span class="absolute left-0 right-0 -bottom-[17px] h-[1.5px] bg-brass transition-transform duration-300 ${
+                isActive ? 'scale-x-100' : 'scale-x-0'
+              }"></span>
+            </button>
+          `;
+        }).join('');
+
+        container.querySelectorAll('[data-category]').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            activeCategory = btn.dataset.category;
+            renderMenuTabs();
+            renderMenuContent();
+          });
+        });
+      }
+
+      function renderMenuContent() {
+        const area = document.getElementById('menu-display-area');
+        area.style.opacity = '0';
+
+        setTimeout(() => {
+          const filtered = MENU_ITEMS.filter((item) => {
+            if (activeCategory !== 'All' && item.category !== activeCategory) return false;
+            if (activeFilter === 'recommended') return item.recommended;
+            if (activeFilter === 'vegetarian') return item.vegetarian;
+            if (activeFilter === 'gf') return item.gf;
+            return true;
+          });
+
+          if (filtered.length === 0) {
+            area.innerHTML = `
+              <div class="py-16 text-center border hairline bg-linen/50">
+                <p class="font-serif text-2xl text-ink">No creations match this filter in ${activeCategory}.</p>
+                <p class="text-xs text-taupe mt-2">Our kitchen gladly adapts seasonal dishes upon request.</p>
+              </div>
+            `;
+            area.style.opacity = '1';
+            return;
+          }
+
+          const featured = filtered.find((i) => i.recommended && i.image);
+          const regular = filtered.filter((i) => i !== featured);
+
+          let html = '';
+
+          // Split Editorial Feature: Chef's Selection
+          if (featured) {
+            html += `
+              <div class="grid grid-cols-1 lg:grid-cols-12 border hairline bg-linen mb-14 overflow-hidden">
+                <div class="lg:col-span-6 relative min-h-[290px] sm:min-h-[380px] overflow-hidden bg-cream">
+                  <img
+                    src="${featured.image}"
+                    alt="${featured.name}"
+                    class="w-full h-full object-cover"
+                  />
+                  <span class="absolute top-5 left-5 px-4 py-1.5 bg-cream/95 border hairline text-[10px] uppercase tracking-[0.26em] text-brass">
+                    Chef’s Selection
+                  </span>
+                </div>
+                <div class="lg:col-span-6 p-8 sm:p-12 flex flex-col justify-between">
+                  <div>
+                    <p class="text-[10px] uppercase tracking-[0.26em] text-taupe mb-2">${featured.category}</p>
+                    <div class="flex items-baseline justify-between gap-4">
+                      <h3 class="font-serif text-3xl sm:text-4xl font-light text-ink leading-tight">${featured.name}</h3>
+                      <span class="font-serif text-3xl text-ink shrink-0">$${featured.price}</span>
+                    </div>
+                    <p class="text-sm text-taupe font-light mt-5 leading-relaxed">${featured.description}</p>
+
+                    <div class="mt-7 pt-6 border-t hairline space-y-4">
+                      <div>
+                        <p class="text-[10px] uppercase tracking-[0.24em] text-brass">Tasting Notes</p>
+                        <p class="font-serif italic text-lg text-ink/90 mt-1">${featured.tastingNotes}</p>
+                      </div>
+                      <div>
+                        <p class="text-[10px] uppercase tracking-[0.24em] text-brass">Sommelier Pairing</p>
+                        <p class="text-xs text-taupe mt-1">${featured.pairing}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="mt-8 flex flex-wrap items-center justify-between gap-4">
+                    <div class="flex gap-2">
+                      ${featured.vegetarian ? '<span class="px-2.5 py-1 text-[9px] uppercase tracking-[0.2em] border hairline bg-cream text-taupe">Vegetarian</span>' : ''}
+                      ${featured.gf ? '<span class="px-2.5 py-1 text-[9px] uppercase tracking-[0.2em] border hairline bg-cream text-taupe">Gluten-Free</span>' : ''}
+                    </div>
+                    <button
+                      type="button"
+                      data-add-cart="${featured.id}"
+                      data-name="${featured.name.replace(/"/g, '&quot;')}"
+                      data-price="${featured.price}"
+                      data-cursor="interactive"
+                      class="px-7 py-3.5 bg-ink text-cream text-[11px] uppercase tracking-[0.22em] hover:bg-brass transition-colors"
+                    >
+                      Add to Selection
+                    </button>
+                  </div>
+                </div>
+              </div>
+            `;
+          }
+
+          // Crisp Hairline-Separated Dish Listings
+          if (regular.length > 0) {
+            html += `
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-x-14 gap-y-9">
+                ${regular.map((item) => `
+                  <div class="border-b hairline pb-7 flex flex-col justify-between gap-4 group">
+                    <div>
+                      <div class="flex items-baseline justify-between gap-4">
+                        <h4 class="font-serif text-2xl font-light text-ink group-hover:text-brass transition-colors">
+                          ${item.name}
+                        </h4>
+                        <span class="font-serif text-2xl text-ink shrink-0">$${item.price}</span>
+                      </div>
+                      <p class="text-xs sm:text-sm text-taupe font-light mt-2.5 leading-relaxed">
+                        ${item.description}
+                      </p>
+                    </div>
+                    <div class="flex items-center justify-between pt-2">
+                      <div class="flex items-center gap-2">
+                        <span class="text-[10px] uppercase tracking-[0.2em] text-taupe/70">${item.category}</span>
+                        ${item.vegetarian ? '<span class="text-[9px] uppercase tracking-[0.2em] text-brass border hairline px-2 py-0.5">V</span>' : ''}
+                        ${item.gf ? '<span class="text-[9px] uppercase tracking-[0.2em] text-brass border hairline px-2 py-0.5">GF</span>' : ''}
+                      </div>
+                      <button
+                        type="button"
+                        data-add-cart="${item.id}"
+                        data-name="${item.name.replace(/"/g, '&quot;')}"
+                        data-price="${item.price}"
+                        data-cursor="interactive"
+                        class="editorial-link text-[10px] uppercase tracking-[0.22em] text-ink hover:text-brass transition-colors"
+                      >
+                        + Add to Selection
+                      </button>
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+            `;
+          }
+
+          area.innerHTML = html;
+          area.style.opacity = '1';
+        }, 150);
+      }
+
+      document.querySelectorAll('.menu-filter-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          activeFilter = btn.dataset.filter;
+          document.querySelectorAll('.menu-filter-btn').forEach((b) => {
+            b.classList.remove('border-ink', 'bg-ink', 'text-cream');
+            b.classList.add('hairline', 'text-taupe');
+          });
+          btn.classList.add('border-ink', 'bg-ink', 'text-cream');
+          btn.classList.remove('hairline', 'text-taupe');
+          renderMenuContent();
+        });
+      });
+
+      /* -----------------------------------------------------------------------
+         RENDER LUXURY SPECIAL EXPERIENCES
+      ----------------------------------------------------------------------- */
+      function renderExperiences() {
+        const grid = document.getElementById('experiences-grid');
+        grid.innerHTML = EXPERIENCES.map((exp) => `
+          <article
+            data-cursor="interactive"
+            class="tilt-card ${exp.span} group bg-cream border hairline hover:border-brass overflow-hidden flex flex-col justify-between reveal-up"
+          >
+            <div class="relative h-64 sm:h-72 overflow-hidden bg-linen">
+              <img
+                src="${exp.image}"
+                alt="${exp.title}"
+                loading="lazy"
+                class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+              />
+              <span class="absolute top-4 right-4 px-3.5 py-1.5 bg-cream/95 border hairline text-[10px] uppercase tracking-[0.22em] text-ink">
+                ${exp.price}
+              </span>
+            </div>
+
+            <div class="p-7 sm:p-9 flex-1 flex flex-col justify-between">
+              <div>
+                <p class="text-[10px] uppercase tracking-[0.26em] text-brass mb-2">${exp.subtitle}</p>
+                <h3 class="font-serif text-2xl sm:text-3xl font-light text-ink group-hover:text-brass transition-colors">
+                  ${exp.title}
+                </h3>
+                <p class="text-xs sm:text-sm text-taupe font-light mt-3 leading-relaxed">
+                  ${exp.desc}
+                </p>
+              </div>
+
+              <div class="mt-7 pt-5 border-t hairline">
+                <button
+                  type="button"
+                  data-request-exp="${exp.title.replace(/"/g, '&quot;')}"
+                  class="editorial-link inline-flex items-center gap-3 text-[11px] uppercase tracking-[0.22em] text-ink hover:text-brass transition-colors"
+                >
+                  <span>Reserve Experience</span>
+                  <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" stroke-width="1.35" viewBox="0 0 24 24">
+                    <path stroke-linecap="square" d="M5 12h14M13 6l6 6-6 6" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </article>
+        `).join('');
+
+        grid.querySelectorAll('.tilt-card').forEach(attachTiltEffect);
+
+        grid.querySelectorAll('[data-request-exp]').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            const expTitle = btn.dataset.requestExp;
+            const select = document.getElementById('res-experience');
+            for (const opt of select.options) {
+              if (opt.value === expTitle) {
+                select.value = expTitle;
+                break;
+              }
+            }
+            document.getElementById('reservations').scrollIntoView({ behavior: 'smooth' });
+            showToast('Experience Pre-Filled', `${expTitle} has been selected in your reservation.`);
+          });
+        });
+      }
+
+      /* -----------------------------------------------------------------------
+         RENDER ASYMMETRIC EDITORIAL GALLERY & LIGHTBOX
+      ----------------------------------------------------------------------- */
+      function renderGallery() {
+        const grid = document.getElementById('gallery-grid');
+        grid.innerHTML = GALLERY_ITEMS.map((item, idx) => `
+          <figure class="${item.span.split(' ')[0]} reveal-up">
+            <button
+              type="button"
+              data-gallery-idx="${idx}"
+              data-cursor="interactive"
+              class="group block w-full text-left focus:outline-none focus-visible:ring-1 focus-visible:ring-brass"
+            >
+              <div class="${item.span.split(' ').slice(1).join(' ')} w-full overflow-hidden border hairline bg-linen">
+                <img
+                  src="${item.src}"
+                  alt="${item.caption}"
+                  loading="lazy"
+                  class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                />
+              </div>
+              <figcaption class="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1 mt-4 pt-3 border-t hairline">
+                <span class="font-serif italic text-xl text-ink group-hover:text-brass transition-colors">${item.caption}</span>
+                <span class="text-[10px] uppercase tracking-[0.24em] text-taupe">${item.sub}</span>
+              </figcaption>
+            </button>
+          </figure>
+        `).join('');
+
+        grid.querySelectorAll('[data-gallery-idx]').forEach((btn) => {
+          btn.addEventListener('click', () => openLightbox(Number(btn.dataset.galleryIdx)));
+        });
+      }
+
+      const lightbox = document.getElementById('gallery-lightbox');
+      const lbImg = document.getElementById('lightbox-img');
+      const lbCaption = document.getElementById('lightbox-caption');
+      const lbSub = document.getElementById('lightbox-subcaption');
+      const lbCounter = document.getElementById('lightbox-counter');
+
+      function updateLightboxView() {
+        const item = GALLERY_ITEMS[currentLightboxIdx];
+        lbImg.style.opacity = '0';
+        setTimeout(() => {
+          lbImg.src = item.src;
+          lbImg.alt = item.caption;
+          lbCaption.textContent = item.caption;
+          lbSub.textContent = item.sub;
+          lbCounter.textContent = `${String(currentLightboxIdx + 1).padStart(2, '0')} / ${String(GALLERY_ITEMS.length).padStart(2, '0')}`;
+          lbImg.style.opacity = '1';
+        }, 120);
+      }
+
+      function openLightbox(idx) {
+        currentLightboxIdx = idx;
+        updateLightboxView();
+        lightbox.classList.remove('opacity-0', 'pointer-events-none');
+        lightbox.classList.add('opacity-100');
+        document.body.style.overflow = 'hidden';
+      }
+
+      function closeLightbox() {
+        lightbox.classList.add('opacity-0', 'pointer-events-none');
+        lightbox.classList.remove('opacity-100');
+        document.body.style.overflow = '';
+      }
+
+      document.getElementById('lightbox-close').addEventListener('click', closeLightbox);
+      document.getElementById('lightbox-prev').addEventListener('click', () => {
+        currentLightboxIdx = (currentLightboxIdx - 1 + GALLERY_ITEMS.length) % GALLERY_ITEMS.length;
+        updateLightboxView();
+      });
+      document.getElementById('lightbox-next').addEventListener('click', () => {
+        currentLightboxIdx = (currentLightboxIdx + 1) % GALLERY_ITEMS.length;
+        updateLightboxView();
+      });
+
+      window.addEventListener('keydown', (e) => {
+        if (!lightbox.classList.contains('pointer-events-none')) {
+          if (e.key === 'Escape') closeLightbox();
+          if (e.key === 'ArrowLeft') {
+            currentLightboxIdx = (currentLightboxIdx - 1 + GALLERY_ITEMS.length) % GALLERY_ITEMS.length;
+            updateLightboxView();
+          }
+          if (e.key === 'ArrowRight') {
+            currentLightboxIdx = (currentLightboxIdx + 1) % GALLERY_ITEMS.length;
+            updateLightboxView();
+          }
+        }
+        if (!accountModal.classList.contains('pointer-events-none') && e.key === 'Escape') toggleAccountModal(false);
+        if (!cartDrawer.classList.contains('translate-x-full') && e.key === 'Escape') toggleCartDrawer(false);
+      });
+
+      /* -----------------------------------------------------------------------
+         TASTING SELECTION DRAWER
+      ----------------------------------------------------------------------- */
+      const cartDrawer = document.getElementById('cart-drawer');
+      const cartBackdrop = document.getElementById('cart-drawer-backdrop');
+      const cartBadge = document.getElementById('cart-badge');
+
+      function toggleCartDrawer(open) {
+        if (open) {
+          cartBackdrop.classList.remove('opacity-0', 'pointer-events-none');
+          cartDrawer.classList.remove('translate-x-full');
+          document.body.style.overflow = 'hidden';
+        } else {
+          cartBackdrop.classList.add('opacity-0', 'pointer-events-none');
+          cartDrawer.classList.add('translate-x-full');
+          document.body.style.overflow = '';
+        }
+      }
+
+      function renderCart() {
+        const container = document.getElementById('cart-items-container');
+        const totalEl = document.getElementById('cart-total');
+        const totalQty = cart.reduce((acc, i) => acc + i.qty, 0);
+        const totalCost = cart.reduce((acc, i) => acc + i.price * i.qty, 0);
+
+        cartBadge.textContent = totalQty;
+        if (totalQty > 0) {
+          cartBadge.classList.remove('opacity-0', 'scale-75');
+          cartBadge.classList.add('opacity-100', 'scale-100');
+        } else {
+          cartBadge.classList.add('opacity-0', 'scale-75');
+          cartBadge.classList.remove('opacity-100', 'scale-100');
+        }
+
+        totalEl.textContent = `$${totalCost}`;
+
+        if (cart.length === 0) {
+          container.innerHTML = `
+            <div class="h-full flex flex-col items-center justify-center text-center py-16">
+              <p class="font-serif text-2xl text-ink">Your Tasting Selection is empty</p>
+              <p class="text-xs text-taupe mt-2 max-w-xs leading-relaxed">
+                Select signature creations or seasonal courses from the editorial menu to share with our kitchen ahead of your visit.
+              </p>
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = cart.map((item) => `
+          <div class="border-b hairline pb-5 flex items-start justify-between gap-4">
+            <div>
+              <p class="font-serif text-xl text-ink leading-snug">${item.name}</p>
+              <p class="text-xs text-brass mt-1">$${item.price} each</p>
+            </div>
+            <div class="flex items-center gap-3 shrink-0">
+              <button type="button" data-cart-dec="${item.id}" class="w-7 h-7 border hairline text-ink hover:border-brass flex items-center justify-center text-xs">−</button>
+              <span class="text-xs w-4 text-center text-ink">${item.qty}</span>
+              <button type="button" data-cart-inc="${item.id}" class="w-7 h-7 border hairline text-ink hover:border-brass flex items-center justify-center text-xs">+</button>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      document.addEventListener('click', (e) => {
+        const addBtn = e.target.closest('[data-add-cart]');
+        if (addBtn) {
+          const id = addBtn.dataset.addCart;
+          const name = addBtn.dataset.name;
+          const price = Number(addBtn.dataset.price);
+          const existing = cart.find((i) => i.id === id);
+          if (existing) existing.qty += 1;
+          else cart.push({ id, name, price, qty: 1 });
+          renderCart();
+          showToast('Added to Selection', `${name} ($${price})`);
+          return;
+        }
+        const incBtn = e.target.closest('[data-cart-inc]');
+        if (incBtn) {
+          const item = cart.find((i) => i.id === incBtn.dataset.cartInc);
+          if (item) { item.qty += 1; renderCart(); }
+          return;
+        }
+        const decBtn = e.target.closest('[data-cart-dec]');
+        if (decBtn) {
+          const idx = cart.findIndex((i) => i.id === decBtn.dataset.cartDec);
+          if (idx > -1) {
+            cart[idx].qty -= 1;
+            if (cart[idx].qty <= 0) cart.splice(idx, 1);
+            renderCart();
+          }
+        }
+      });
+
+      document.getElementById('open-cart-btn').addEventListener('click', () => toggleCartDrawer(true));
+      document.getElementById('close-cart-btn').addEventListener('click', () => toggleCartDrawer(false));
+      cartBackdrop.addEventListener('click', () => toggleCartDrawer(false));
+
+      document.getElementById('attach-tasting-btn').addEventListener('click', () => {
+        if (cart.length === 0) {
+          toggleCartDrawer(false);
+          document.getElementById('menu').scrollIntoView({ behavior: 'smooth' });
+          return;
+        }
+        const summary = cart.map((i) => `${i.qty}x ${i.name}`).join(', ');
+        document.getElementById('res-notes').value = `Tasting Selection: ${summary}`;
+        toggleCartDrawer(false);
+        document.getElementById('reservations').scrollIntoView({ behavior: 'smooth' });
+        showToast('Selection Attached', 'Your curated dishes have been added to your reservation notes.');
+      });
+
+      /* -----------------------------------------------------------------------
+         RESERVATION SYSTEM & GUEST DOSSIER
+      ----------------------------------------------------------------------- */
+      const TIME_SLOTS = ['12:30', '13:30', '18:00', '18:30', '19:30', '20:00', '20:30', '21:15'];
+      const timeGrid = document.getElementById('time-slots-grid');
+      const hiddenTime = document.getElementById('res-time');
+
+      function renderTimeSlots() {
+        timeGrid.innerHTML = TIME_SLOTS.map((slot) => {
+          const active = hiddenTime.value === slot;
+          return `
+            <button
+              type="button"
+              data-slot="${slot}"
+              data-cursor="interactive"
+              class="py-2.5 text-xs tracking-wider border transition-all ${
+                active
+                  ? 'border-ink bg-ink text-cream'
+                  : 'hairline text-taupe hover:border-brass hover:text-ink'
+              }"
+            >
+              ${slot}
+            </button>
+          `;
+        }).join('');
+
+        timeGrid.querySelectorAll('[data-slot]').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            hiddenTime.value = btn.dataset.slot;
+            renderTimeSlots();
+          });
+        });
+      }
+
+      const dateInput = document.getElementById('res-date');
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      const tomorrowStr = tomorrow.toISOString().split('T')[0];
+      dateInput.min = tomorrowStr;
+      dateInput.value = tomorrowStr;
+
+      const resForm = document.getElementById('reservation-form');
+      const resConf = document.getElementById('reservation-confirmation');
+      const submitBtn = document.getElementById('res-submit-btn');
+
+      function setFieldError(id, msg) {
+        const el = document.getElementById(id);
+        if (msg) { el.textContent = msg; el.classList.remove('hidden'); }
+        else { el.classList.add('hidden'); }
+      }
+
+      resForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const dateVal = dateInput.value.trim();
+        const nameVal = document.getElementById('res-name').value.trim();
+        const emailVal = document.getElementById('res-email').value.trim();
+        const phoneVal = document.getElementById('res-phone').value.trim();
+
+        let valid = true;
+        setFieldError('err-date', '');
+        setFieldError('err-name', '');
+        setFieldError('err-email', '');
+        setFieldError('err-phone', '');
+
+        if (!dateVal) { setFieldError('err-date', 'Please select a preferred date.'); valid = false; }
+        if (nameVal.length < 2) { setFieldError('err-name', 'Please provide your full name.'); valid = false; }
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal)) { setFieldError('err-email', 'Please enter a valid email address.'); valid = false; }
+        if (phoneVal.length < 6) { setFieldError('err-phone', 'Please provide a contact telephone number.'); valid = false; }
+        if (!valid) return;
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Confirming...';
+
+        setTimeout(() => {
+          const code = `ELARA-${Math.floor(1000 + Math.random() * 9000)}`;
+          const booking = {
+            code,
+            date: dateVal,
+            time: hiddenTime.value,
+            guests: document.getElementById('res-guests').value,
+            seating: document.getElementById('res-seating').value,
+            experience: document.getElementById('res-experience').value,
+            name: nameVal,
+            email: emailVal,
+            phone: phoneVal,
+            notes: document.getElementById('res-notes').value.trim()
+          };
+
+          reservations.unshift(booking);
+          saveReservations(reservations);
+          renderAccountReservations();
+
+          document.getElementById('conf-code').textContent = booking.code;
+          document.getElementById('conf-datetime').textContent = `${booking.date} at ${booking.time}`;
+          document.getElementById('conf-seating').textContent = `${booking.guests} • ${booking.seating}`;
+          document.getElementById('conf-experience').textContent = booking.experience;
+
+          resForm.classList.add('hidden');
+          resConf.classList.remove('hidden');
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Confirm Reservation';
+          showToast('Reservation Confirmed', `Reference ${booking.code} saved to your Guest Dossier.`);
+        }, 700);
+      });
+
+      document.getElementById('new-reservation-btn').addEventListener('click', () => {
+        resConf.classList.add('hidden');
+        resForm.classList.remove('hidden');
+        resForm.reset();
+        dateInput.value = tomorrowStr;
+        hiddenTime.value = '19:30';
+        renderTimeSlots();
+      });
+
+      const accountModal = document.getElementById('account-modal');
+      const accountDot = document.getElementById('account-dot');
+
+      function toggleAccountModal(open) {
+        if (open) {
+          renderAccountReservations();
+          accountModal.classList.remove('opacity-0', 'pointer-events-none');
+          accountModal.classList.add('opacity-100');
+          document.body.style.overflow = 'hidden';
+        } else {
+          accountModal.classList.add('opacity-0', 'pointer-events-none');
+          accountModal.classList.remove('opacity-100');
+          document.body.style.overflow = '';
+        }
+      }
+
+      function renderAccountReservations() {
+        const listEl = document.getElementById('saved-reservations-list');
+        if (reservations.length > 0) accountDot.classList.remove('opacity-0');
+        else accountDot.classList.add('opacity-0');
+
+        if (reservations.length === 0) {
+          listEl.innerHTML = `
+            <div class="py-12 text-center">
+              <p class="font-serif text-2xl text-ink">No Upcoming Reservations</p>
+              <p class="text-xs text-taupe mt-2">Once confirmed, your private dining dossier will appear here.</p>
+            </div>
+          `;
+          return;
+        }
+
+        listEl.innerHTML = reservations.map((b) => `
+          <div class="border hairline bg-linen/60 p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-5">
+            <div class="space-y-1.5">
+              <div class="flex items-center gap-3">
+                <span class="text-xs uppercase tracking-[0.24em] text-brass font-medium">${b.code}</span>
+                <span class="text-[10px] uppercase tracking-[0.2em] text-taupe">• ${b.seating}</span>
+              </div>
+              <p class="font-serif text-2xl text-ink">${b.date} at ${b.time} — ${b.guests}</p>
+              <p class="text-xs text-taupe">${b.experience} &nbsp;|&nbsp; Reserved under ${b.name}</p>
+              ${b.notes ? `<p class="text-[11px] italic text-taupe/80 pt-1">“${b.notes}”</p>` : ''}
+            </div>
+            <button
+              type="button"
+              data-cancel-res="${b.code}"
+              class="px-4 py-2 border hairline text-[10px] uppercase tracking-[0.22em] text-taupe hover:border-ink hover:text-ink transition-colors shrink-0 self-start sm:self-center"
+            >
+              Cancel
+            </button>
+          </div>
+        `).join('');
+
+        listEl.querySelectorAll('[data-cancel-res]').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            const code = btn.dataset.cancelRes;
+            reservations = reservations.filter((r) => r.code !== code);
+            saveReservations(reservations);
+            renderAccountReservations();
+            showToast('Reservation Cancelled', `Reference ${code} has been released.`);
+          });
+        });
+      }
+
+      document.getElementById('open-account-btn').addEventListener('click', () => toggleAccountModal(true));
+      document.getElementById('close-account-btn').addEventListener('click', () => toggleAccountModal(false));
+      document.getElementById('view-in-account-btn').addEventListener('click', () => toggleAccountModal(true));
+      accountModal.addEventListener('click', (e) => { if (e.target === accountModal) toggleAccountModal(false); });
+
+      document.getElementById('newsletter-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const email = document.getElementById('newsletter-email');
+        if (!email.value.trim()) return;
+        document.getElementById('newsletter-feedback').classList.remove('hidden');
+        email.value = '';
+      });
+
+      /* -----------------------------------------------------------------------
+         SCROLL REVEALS & STICKY PHILOSOPHY CHAPTER OBSERVER
+      ----------------------------------------------------------------------- */
+      function initObservers() {
+        const revealObserver = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('is-visible');
+                revealObserver.unobserve(entry.target);
+              }
+            });
+          },
+          { threshold: 0.12 }
+        );
+        document.querySelectorAll('.reveal-up').forEach((el) => revealObserver.observe(el));
+
+        const storyImages = [
+          document.getElementById('story-img-0'),
+          document.getElementById('story-img-1'),
+          document.getElementById('story-img-2')
+        ];
+        const storyCaption = document.getElementById('story-caption');
+        const storyNumeral = document.getElementById('story-numeral');
+
+        const chapterObserver = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                const idx = Number(entry.target.dataset.chapter);
+                storyImages.forEach((img, i) => {
+                  if (i === idx) {
+                    img.classList.remove('opacity-0', 'scale-105');
+                    img.classList.add('opacity-100', 'scale-100');
+                  } else {
+                    img.classList.add('opacity-0', 'scale-105');
+                    img.classList.remove('opacity-100', 'scale-100');
+                  }
+                });
+                storyCaption.textContent = entry.target.dataset.caption;
+                storyNumeral.textContent = entry.target.dataset.numeral;
+              }
+            });
+          },
+          { rootMargin: '-35% 0px -35% 0px' }
+        );
+        document.querySelectorAll('.story-chapter').forEach((ch) => chapterObserver.observe(ch));
+      }
+
+      /* -----------------------------------------------------------------------
+         WEBGL CAPABILITY CHECK
+      ----------------------------------------------------------------------- */
+      function isWebGLAvailable() {
+        try {
+          const canvas = document.createElement('canvas');
+          return !!(window.WebGLRenderingContext && (canvas.getContext('webgl') || canvas.getContext('experimental-webgl')));
+        } catch (e) {
+          return false;
+        }
+      }
+
+      /* -----------------------------------------------------------------------
+         3D SCENE 1: SUNLIT EDITORIAL HERO (BONE PORCELAIN ON TRAVERTINE)
+      ----------------------------------------------------------------------- */
+      function initHero3DScene() {
+        const canvas = document.getElementById('hero-canvas');
+        const fallback = document.getElementById('hero-fallback');
+        const wrapper = document.getElementById('hero-3d-wrapper');
+
+        if (!isWebGLAvailable() || typeof THREE === 'undefined' || prefersReducedMotion) {
+          wrapper.classList.add('hidden');
+          fallback.classList.remove('hidden');
+          return;
+        }
+
+        let renderer;
+        try {
+          renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'high-performance' });
+        } catch (e) {
+          wrapper.classList.add('hidden');
+          fallback.classList.remove('hidden');
+          return;
+        }
+
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.setSize(wrapper.clientWidth, wrapper.clientHeight);
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1.08;
+
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0xf7f3ec);
+        scene.fog = new THREE.FogExp2(0xf7f3ec, 0.052);
+
+        const camera = new THREE.PerspectiveCamera(35, wrapper.clientWidth / wrapper.clientHeight, 0.1, 60);
+        const isMobile = window.innerWidth < 768;
+        const baseCamPos = isMobile ? new THREE.Vector3(0, 3.8, 7.8) : new THREE.Vector3(-1.25, 3.15, 6.25);
+        camera.position.set(baseCamPos.x, baseCamPos.y + 0.9, baseCamPos.z + 1.6);
+
+        // Soft Studio Daylight & Warm Directional Sunlight
+        const hemiLight = new THREE.HemisphereLight(0xfffdf8, 0xd8cec0, 0.85);
+        scene.add(hemiLight);
+
+        const sunLight = new THREE.DirectionalLight(0xfff4e0, 1.45);
+        sunLight.position.set(5.5, 8.5, 4.5);
+        sunLight.castShadow = true;
+        sunLight.shadow.mapSize.width = 1024;
+        sunLight.shadow.mapSize.height = 1024;
+        sunLight.shadow.camera.near = 1;
+        sunLight.shadow.camera.far = 22;
+        sunLight.shadow.camera.left = -5;
+        sunLight.shadow.camera.right = 5;
+        sunLight.shadow.camera.top = 5;
+        sunLight.shadow.camera.bottom = -5;
+        sunLight.shadow.bias = -0.0005;
+        scene.add(sunLight);
+
+        const fillLight = new THREE.DirectionalLight(0xeae2d4, 0.45);
+        fillLight.position.set(-5, 4, -3);
+        scene.add(fillLight);
+
+        // Table Group (positioned right on desktop for spacious left typography)
+        const tableGroup = new THREE.Group();
+        tableGroup.position.x = isMobile ? 0 : 1.45;
+        tableGroup.position.y = -0.45;
+        scene.add(tableGroup);
+
+        // Honed Warm Travertine / Linen Pedestal
+        const travertineMat = new THREE.MeshStandardMaterial({
+          color: 0xece5d8,
+          roughness: 0.78,
+          metalness: 0.02
+        });
+        const pedestal = new THREE.Mesh(new THREE.CylinderGeometry(3.35, 3.45, 0.42, 72), travertineMat);
+        pedestal.position.y = -0.21;
+        pedestal.receiveShadow = true;
+        tableGroup.add(pedestal);
+
+        // Soft Ground Plane matching Warm Cream seamlessly
+        const floorPlane = new THREE.Mesh(
+          new THREE.PlaneGeometry(36, 36),
+          new THREE.MeshStandardMaterial({ color: 0xf7f3ec, roughness: 0.95 })
+        );
+        floorPlane.rotation.x = -Math.PI / 2;
+        floorPlane.position.y = -0.42;
+        floorPlane.receiveShadow = true;
+        tableGroup.add(floorPlane);
+
+        // Antique Brushed Brass Material
+        const brassMat = new THREE.MeshStandardMaterial({
+          color: 0xb5955a,
+          metalness: 0.88,
+          roughness: 0.28
+        });
+
+        // Subtle Brass Inlay on Pedestal
+        const inlayRing = new THREE.Mesh(new THREE.RingGeometry(2.15, 2.175, 72), brassMat);
+        inlayRing.rotation.x = -Math.PI / 2;
+        inlayRing.position.y = 0.003;
+        tableGroup.add(inlayRing);
+
+        // --- MATTE BONE-PORCELAIN PLATE WITH THIN BRUSHED-BRASS RIM ---
+        const plateGroup = new THREE.Group();
+        tableGroup.add(plateGroup);
+
+        const platePoints = [
+          new THREE.Vector2(0.0, 0.025),
+          new THREE.Vector2(0.92, 0.025),
+          new THREE.Vector2(1.08, 0.09),
+          new THREE.Vector2(1.62, 0.175),
+          new THREE.Vector2(1.65, 0.145),
+          new THREE.Vector2(1.04, 0.03),
+          new THREE.Vector2(0.75, 0.0),
+          new THREE.Vector2(0.0, 0.0)
+        ];
+        const bonePorcelainMat = new THREE.MeshStandardMaterial({
+          color: 0xfbf8f2,
+          roughness: 0.32,
+          metalness: 0.04
+        });
+        const plateMesh = new THREE.Mesh(new THREE.LatheGeometry(platePoints, 72), bonePorcelainMat);
+        plateMesh.castShadow = true;
+        plateMesh.receiveShadow = true;
+        plateGroup.add(plateMesh);
+
+        const plateRim = new THREE.Mesh(new THREE.TorusGeometry(1.63, 0.012, 16, 80), brassMat);
+        plateRim.rotation.x = Math.PI / 2;
+        plateRim.position.y = 0.172;
+        plateGroup.add(plateRim);
+
+        // --- SCULPTED SIGNATURE DISH ---
+        // Glossy espresso-amber jus pool
+        const jusMesh = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.76, 0.76, 0.01, 48),
+          new THREE.MeshStandardMaterial({ color: 0x452616, roughness: 0.1, metalness: 0.12 })
+        );
+        jusMesh.position.y = 0.03;
+        plateGroup.add(jusMesh);
+
+        // Sculpted Seared Medallion
+        const medallion = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.45, 0.49, 0.25, 40),
+          new THREE.MeshStandardMaterial({ color: 0x5c3622, roughness: 0.42, metalness: 0.05 })
+        );
+        medallion.position.set(-0.1, 0.16, 0.04);
+        medallion.castShadow = true;
+        medallion.receiveShadow = true;
+        plateGroup.add(medallion);
+
+        const crust = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.43, 0.45, 0.038, 40),
+          new THREE.MeshStandardMaterial({ color: 0x381e11, roughness: 0.25, metalness: 0.1 })
+        );
+        crust.position.set(-0.1, 0.285, 0.04);
+        plateGroup.add(crust);
+
+        // Creamy Celeriac Purée Swirl
+        const pureeMat = new THREE.MeshStandardMaterial({ color: 0xf1dfb6, roughness: 0.28, metalness: 0.03 });
+        const swirlPoints = [];
+        for (let i = 0; i <= 24; i++) {
+          const t = i / 24;
+          const angle = t * Math.PI * 1.15 - 0.5;
+          const radius = 0.52 + t * 0.24;
+          swirlPoints.push(new THREE.Vector3(Math.cos(angle) * radius, 0.065 - t * 0.02, Math.sin(angle) * radius));
+        }
+        const swirlCurve = new THREE.CatmullRomCurve3(swirlPoints);
+        const swirlMesh = new THREE.Mesh(new THREE.TubeGeometry(swirlCurve, 32, 0.065, 12, false), pureeMat);
+        swirlMesh.scale.set(1, 0.45, 1);
+        swirlMesh.position.y = 0.03;
+        swirlMesh.castShadow = true;
+        plateGroup.add(swirlMesh);
+
+        // Delicate Micro-Greens
+        const herbMat = new THREE.MeshStandardMaterial({ color: 0x4c6b42, roughness: 0.5 });
+        for (let i = 0; i < 5; i++) {
+          const sprig = new THREE.Mesh(new THREE.ConeGeometry(0.024, 0.14, 6), herbMat);
+          sprig.position.set(-0.16 + i * 0.075, 0.34, -0.05 + (i % 2) * 0.12);
+          sprig.rotation.set(0.32, i * 1.2, 0.42);
+          plateGroup.add(sprig);
+        }
+
+        // Subtle Gold Leaf Accent
+        const goldLeafMat = new THREE.MeshStandardMaterial({
+          color: 0xe6c36c,
+          metalness: 0.96,
+          roughness: 0.16,
+          side: THREE.DoubleSide
+        });
+        for (let i = 0; i < 2; i++) {
+          const leaf = new THREE.Mesh(new THREE.PlaneGeometry(0.085, 0.065), goldLeafMat);
+          leaf.position.set(-0.08 + i * 0.11, 0.32, 0.04 - i * 0.05);
+          leaf.rotation.set(-Math.PI / 2.3, i * 0.9, 0.25);
+          plateGroup.add(leaf);
+        }
+
+        // --- SLENDER CRYSTAL WINE GLASS ---
+        const glassPoints = [
+          new THREE.Vector2(0.0, 0.0),
+          new THREE.Vector2(0.34, 0.0),
+          new THREE.Vector2(0.33, 0.022),
+          new THREE.Vector2(0.04, 0.075),
+          new THREE.Vector2(0.032, 0.95),
+          new THREE.Vector2(0.16, 1.05),
+          new THREE.Vector2(0.42, 1.42),
+          new THREE.Vector2(0.40, 1.82),
+          new THREE.Vector2(0.32, 2.12)
+        ];
+        const crystalMat = new THREE.MeshPhysicalMaterial({
+          color: 0xffffff,
+          metalness: 0.05,
+          roughness: 0.05,
+          transparent: true,
+          opacity: 0.42,
+          clearcoat: 1.0,
+          clearcoatRoughness: 0.05,
+          side: THREE.DoubleSide
+        });
+        const wineGlass = new THREE.Mesh(new THREE.LatheGeometry(glassPoints, 48), crystalMat);
+        wineGlass.position.set(1.62, 0.005, -1.12);
+        tableGroup.add(wineGlass);
+
+        // Pale Golden Champagne / White Burgundy inside glass
+        const wineGeo = new THREE.LatheGeometry([
+          new THREE.Vector2(0.0, 1.06),
+          new THREE.Vector2(0.15, 1.08),
+          new THREE.Vector2(0.38, 1.38),
+          new THREE.Vector2(0.37, 1.48),
+          new THREE.Vector2(0.0, 1.48)
+        ], 40);
+        const wineMesh = new THREE.Mesh(
+          wineGeo,
+          new THREE.MeshStandardMaterial({ color: 0xe6cf95, roughness: 0.12, metalness: 0.05, transparent: true, opacity: 0.78 })
+        );
+        wineMesh.position.copy(wineGlass.position);
+        tableGroup.add(wineMesh);
+
+        // --- POLISHED BRUSHED-BRASS CUTLERY ---
+        const knifeGroup = new THREE.Group();
+        const kHandle = new THREE.Mesh(new THREE.BoxGeometry(0.055, 0.022, 0.95), brassMat);
+        kHandle.position.z = 0.45;
+        const kBlade = new THREE.Mesh(new THREE.BoxGeometry(0.068, 0.012, 1.05), brassMat);
+        kBlade.position.z = -0.52;
+        knifeGroup.add(kHandle, kBlade);
+        knifeGroup.position.set(2.02, 0.018, 0.25);
+        knifeGroup.castShadow = true;
+        tableGroup.add(knifeGroup);
+
+        const forkGroup = new THREE.Group();
+        const fHandle = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.02, 1.22), brassMat);
+        fHandle.position.z = 0.35;
+        forkGroup.add(fHandle);
+        for (let t = -1.5; t <= 1.5; t += 1) {
+          const tine = new THREE.Mesh(new THREE.BoxGeometry(0.011, 0.013, 0.42), brassMat);
+          tine.position.set(t * 0.021, 0.0, -0.44);
+          forkGroup.add(tine);
+        }
+        forkGroup.position.set(-2.02, 0.018, 0.25);
+        tableGroup.add(forkGroup);
+
+        // --- MINIMALIST IVORY TAPER CANDLE ---
+        const candleGroup = new THREE.Group();
+        candleGroup.position.set(-1.72, 0, -1.35);
+        tableGroup.add(candleGroup);
+
+        const holder = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.21, 0.22, 32), brassMat);
+        holder.position.y = 0.11;
+        holder.castShadow = true;
+        candleGroup.add(holder);
+
+        const wax = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.068, 0.075, 1.32, 24),
+          new THREE.MeshStandardMaterial({ color: 0xfbf7ef, roughness: 0.65 })
+        );
+        wax.position.y = 0.88;
+        wax.castShadow = true;
+        candleGroup.add(wax);
+
+        const flame = new THREE.Mesh(
+          new THREE.SphereGeometry(0.04, 16, 16),
+          new THREE.MeshBasicMaterial({ color: 0xffcf73 })
+        );
+        flame.scale.set(0.7, 1.85, 0.7);
+        flame.position.y = 1.61;
+        candleGroup.add(flame);
+
+        const candleLight = new THREE.PointLight(0xffb85c, 0.9, 6, 1.8);
+        candleLight.position.set(-1.72, 1.72, -1.35);
+        tableGroup.add(candleLight);
+
+        // --- SUBTLE SUNLIT AMBIENT DUST PARTICLES ---
+        const particleCount = 55;
+        const pGeo = new THREE.BufferGeometry();
+        const pPos = new Float32Array(particleCount * 3);
+        for (let i = 0; i < particleCount; i++) {
+          pPos[i * 3] = (Math.random() - 0.5) * 9;
+          pPos[i * 3 + 1] = Math.random() * 4.2 + 0.3;
+          pPos[i * 3 + 2] = (Math.random() - 0.5) * 7;
+        }
+        pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
+        const dust = new THREE.Points(
+          pGeo,
+          new THREE.PointsMaterial({ color: 0x9e7f47, size: 0.032, transparent: true, opacity: 0.38 })
+        );
+        scene.add(dust);
+
+        // Mouse Parallax & Viewport Culling
+        let targetMX = 0, targetMY = 0, curMX = 0, curMY = 0;
+        let heroVisible = true;
+
+        window.addEventListener('mousemove', (e) => {
+          targetMX = (e.clientX / window.innerWidth - 0.5) * 2;
+          targetMY = (e.clientY / window.innerHeight - 0.5) * 2;
+        }, { passive: true });
+
+        new IntersectionObserver((entries) => {
+          heroVisible = entries[0].isIntersecting;
+        }, { threshold: 0.02 }).observe(document.getElementById('hero'));
+
+        window.addEventListener('resize', () => {
+          if (!wrapper.clientWidth || !wrapper.clientHeight) return;
+          camera.aspect = wrapper.clientWidth / wrapper.clientHeight;
+          camera.updateProjectionMatrix();
+          renderer.setSize(wrapper.clientWidth, wrapper.clientHeight);
+          tableGroup.position.x = window.innerWidth < 768 ? 0 : 1.45;
+        });
+
+        const clock = new THREE.Clock();
+        let intro = 0;
+
+        function animateHero() {
+          requestAnimationFrame(animateHero);
+          if (!heroVisible) return;
+
+          const t = clock.getElapsedTime();
+          intro = Math.min(1, intro + 0.018);
+          const ease = 1 - Math.pow(1 - intro, 3);
+
+          curMX += (targetMX - curMX) * 0.04;
+          curMY += (targetMY - curMY) * 0.04;
+
+          const desiredX = baseCamPos.x + curMX * 0.42 + Math.sin(t * 0.25) * 0.1;
+          const desiredY = baseCamPos.y - curMY * 0.2 + (1 - ease) * 0.85;
+          const desiredZ = baseCamPos.z + (1 - ease) * 1.4;
+
+          camera.position.x += (desiredX - camera.position.x) * 0.06;
+          camera.position.y += (desiredY - camera.position.y) * 0.06;
+          camera.position.z += (desiredZ - camera.position.z) * 0.06;
+          camera.lookAt(tableGroup.position.x * 0.65, 0.22, 0);
+
+          plateGroup.rotation.y = t * 0.075 + curMX * 0.14;
+
+          candleLight.intensity = 0.85 + Math.sin(t * 7.1) * 0.09;
+          flame.scale.y = 1.8 + Math.sin(t * 9.2) * 0.14;
+
+          dust.rotation.y = t * 0.016;
+          dust.position.y = Math.sin(t * 0.35) * 0.07;
+
+          renderer.render(scene, camera);
+        }
+
+        animateHero();
+      }
+
+      /* -----------------------------------------------------------------------
+         3D SCENE 2: INTERACTIVE ARCHITECTURAL LIMEWASH DINING SALON
+      ----------------------------------------------------------------------- */
+      function initAtmosphere3DScene() {
+        const canvas = document.getElementById('atmosphere-canvas');
+        const fallback = document.getElementById('atmosphere-fallback');
+        const container = canvas.parentElement;
+
+        if (!isWebGLAvailable() || typeof THREE === 'undefined' || prefersReducedMotion) {
+          canvas.classList.add('hidden');
+          fallback.classList.remove('hidden');
+          return;
+        }
+
+        let renderer;
+        try {
+          renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
+        } catch (e) {
+          canvas.classList.add('hidden');
+          fallback.classList.remove('hidden');
+          return;
+        }
+
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.setSize(container.clientWidth, container.clientHeight);
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1.05;
+
+        const scene = new THREE.Scene();
+        const bgColor = new THREE.Color(0xf3ede3);
+        scene.background = bgColor;
+        scene.fog = new THREE.FogExp2(0xf3ede3, 0.036);
+
+        const camera = new THREE.PerspectiveCamera(42, container.clientWidth / container.clientHeight, 0.1, 80);
+        camera.position.set(0.5, 2.5, 5.8);
+
+        // Lighting Rig (Animated between Morning / Golden Hour / Evening)
+        const hemiLight = new THREE.HemisphereLight(0xfffdf8, 0xd8cec0, 0.9);
+        scene.add(hemiLight);
+
+        const sunDir = new THREE.DirectionalLight(0xfff5e4, 1.4);
+        sunDir.position.set(6, 9, 5);
+        sunDir.castShadow = true;
+        sunDir.shadow.mapSize.width = 1024;
+        sunDir.shadow.mapSize.height = 1024;
+        scene.add(sunDir);
+
+        const candlePoint = new THREE.PointLight(0xffad52, 0.4, 11, 1.6);
+        candlePoint.position.set(0, 1.9, 0);
+        scene.add(candlePoint);
+
+        // Warm Travertine Floor
+        const floor = new THREE.Mesh(
+          new THREE.PlaneGeometry(36, 36),
+          new THREE.MeshStandardMaterial({ color: 0xe7dfd2, roughness: 0.72, metalness: 0.04 })
+        );
+        floor.rotation.x = -Math.PI / 2;
+        floor.receiveShadow = true;
+        scene.add(floor);
+
+        // Warm Limewash Plaster Materials
+        const plasterMat = new THREE.MeshStandardMaterial({ color: 0xf0e9dd, roughness: 0.88, metalness: 0.02 });
+        const brassMat = new THREE.MeshStandardMaterial({ color: 0xa8884d, metalness: 0.85, roughness: 0.28 });
+
+        // Rear Limewash Wall & Sculpted Archway
+        const backWall = new THREE.Mesh(new THREE.BoxGeometry(22, 10, 0.5), plasterMat);
+        backWall.position.set(0, 5, -6.8);
+        backWall.receiveShadow = true;
+        scene.add(backWall);
+
+        const arch = new THREE.Mesh(new THREE.TorusGeometry(3.3, 0.28, 16, 60, Math.PI), plasterMat);
+        arch.position.set(0, 3.6, -6.4);
+        scene.add(arch);
+
+        const archTrim = new THREE.Mesh(new THREE.TorusGeometry(3.04, 0.028, 12, 60, Math.PI), brassMat);
+        archTrim.position.set(0, 3.6, -6.28);
+        scene.add(archTrim);
+
+        // Fluted Limewash Columns
+        [[-5.2, -4.6], [-2.4, -6.2], [2.4, -6.2], [5.2, -4.6], [-6.2, 0.4], [6.2, 0.4]].forEach(([x, z]) => {
+          const col = new THREE.Mesh(new THREE.CylinderGeometry(0.38, 0.42, 9, 20), plasterMat);
+          col.position.set(x, 4.5, z);
+          col.castShadow = true;
+          col.receiveShadow = true;
+          scene.add(col);
+
+          const baseRing = new THREE.Mesh(new THREE.TorusGeometry(0.43, 0.025, 10, 32), brassMat);
+          baseRing.rotation.x = Math.PI / 2;
+          baseRing.position.set(x, 0.22, z);
+          scene.add(baseRing);
+        });
+
+        // Soft Architectural Sunbeam Planes (Visible in Morning & Golden Hour)
+        const beamMat = new THREE.MeshBasicMaterial({
+          color: 0xfff3d6,
+          transparent: true,
+          opacity: 0.11,
+          side: THREE.DoubleSide,
+          depthWrite: false
+        });
+        const beam1 = new THREE.Mesh(new THREE.PlaneGeometry(2.8, 9.5), beamMat);
+        beam1.position.set(1.8, 4.2, -2.5);
+        beam1.rotation.set(0.25, -0.35, -0.42);
+        scene.add(beam1);
+
+        const beam2 = new THREE.Mesh(new THREE.PlaneGeometry(2.0, 9.0), beamMat);
+        beam2.position.set(-1.5, 4.0, -3.2);
+        beam2.rotation.set(0.22, -0.35, -0.42);
+        scene.add(beam2);
+
+        // Central Travertine & Linen Dining Table
+        const centerTable = new THREE.Group();
+        scene.add(centerTable);
+
+        const linenMat = new THREE.MeshStandardMaterial({ color: 0xf8f4ec, roughness: 0.85 });
+        const tableBase = new THREE.Mesh(new THREE.CylinderGeometry(1.62, 1.68, 1.04, 48), linenMat);
+        tableBase.position.y = 0.52;
+        tableBase.castShadow = true;
+        tableBase.receiveShadow = true;
+        centerTable.add(tableBase);
+
+        const travertineTop = new THREE.Mesh(
+          new THREE.CylinderGeometry(1.66, 1.66, 0.05, 48),
+          new THREE.MeshStandardMaterial({ color: 0xeae2d3, roughness: 0.6 })
+        );
+        travertineTop.position.y = 1.05;
+        travertineTop.receiveShadow = true;
+        centerTable.add(travertineTop);
+
+        const tableTrim = new THREE.Mesh(new THREE.TorusGeometry(1.66, 0.016, 12, 64), brassMat);
+        tableTrim.rotation.x = Math.PI / 2;
+        tableTrim.position.y = 1.06;
+        centerTable.add(tableTrim);
+
+        // Place Settings, Crystal Glassware & Bouclé Dining Chairs
+        const plateMat = new THREE.MeshStandardMaterial({ color: 0xfdfbf7, roughness: 0.25 });
+        const glassMat = new THREE.MeshPhysicalMaterial({
+          color: 0xffffff, roughness: 0.05, transparent: true, opacity: 0.42, clearcoat: 1.0
+        });
+        const chairMat = new THREE.MeshStandardMaterial({ color: 0xd9cfc0, roughness: 0.85 });
+
+        [-1, 1].forEach((side) => {
+          const plate = new THREE.Mesh(new THREE.CylinderGeometry(0.32, 0.26, 0.03, 32), plateMat);
+          plate.position.set(side * 0.92, 1.09, 0);
+          centerTable.add(plate);
+
+          const pRim = new THREE.Mesh(new THREE.TorusGeometry(0.32, 0.008, 8, 32), brassMat);
+          pRim.rotation.x = Math.PI / 2;
+          pRim.position.set(side * 0.92, 1.105, 0);
+          centerTable.add(pRim);
+
+          const glass = new THREE.Mesh(new THREE.CylinderGeometry(0.085, 0.028, 0.34, 20), glassMat);
+          glass.position.set(side * 0.82, 1.26, side * 0.34);
+          centerTable.add(glass);
+
+          const seat = new THREE.Mesh(new THREE.CylinderGeometry(0.45, 0.42, 0.14, 24), chairMat);
+          seat.position.set(side * 2.15, 0.62, 0);
+          seat.castShadow = true;
+          centerTable.add(seat);
+
+          const back = new THREE.Mesh(
+            new THREE.CylinderGeometry(0.45, 0.45, 0.64, 24, 1, true, side > 0 ? -Math.PI / 2 : Math.PI / 2, Math.PI),
+            chairMat
+          );
+          back.position.set(side * 2.15, 1.02, 0);
+          centerTable.add(back);
+        });
+
+        // Minimalist Brass Candle Centerpiece
+        const candBase = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.18, 0.42, 24), brassMat);
+        candBase.position.y = 1.28;
+        centerTable.add(candBase);
+
+        const flames = [];
+        [-0.2, 0, 0.2].forEach((offset, idx) => {
+          const h = idx === 1 ? 0.44 : 0.32;
+          const stick = new THREE.Mesh(
+            new THREE.CylinderGeometry(0.024, 0.026, h, 16),
+            new THREE.MeshStandardMaterial({ color: 0xfbf7ef, roughness: 0.7 })
+          );
+          stick.position.set(offset, 1.48 + h / 2, 0);
+          centerTable.add(stick);
+
+          const fl = new THREE.Mesh(new THREE.SphereGeometry(0.032, 12, 12), new THREE.MeshBasicMaterial({ color: 0xffd175 }));
+          fl.scale.set(0.7, 1.8, 0.7);
+          fl.position.set(offset, 1.54 + h, 0);
+          centerTable.add(fl);
+          flames.push(fl);
+        });
+
+        // 3 Lighting & Camera Presets
+        const PRESETS = {
+          morning: {
+            title: 'Morning Sunlit Salon',
+            desc: 'Crisp architectural daylight streaming across limewash plaster arches, honed travertine, and fresh linen.',
+            pos: new THREE.Vector3(0.5, 2.55, 5.8),
+            target: new THREE.Vector3(0, 1.4, -0.5),
+            bg: new THREE.Color(0xf3ede3),
+            sunColor: new THREE.Color(0xfff7ea),
+            sunIntensity: 1.45,
+            hemiIntensity: 0.92,
+            candleIntensity: 0.35,
+            beamOpacity: 0.12
+          },
+          golden: {
+            title: 'Golden Hour Table',
+            desc: 'Late-afternoon amber sunlight casting elongated sculptural shadows across brushed brass and crystal.',
+            pos: new THREE.Vector3(4.2, 2.2, 4.4),
+            target: new THREE.Vector3(0, 1.25, 0),
+            bg: new THREE.Color(0xeadac4),
+            sunColor: new THREE.Color(0xffbe73),
+            sunIntensity: 1.65,
+            hemiIntensity: 0.65,
+            candleIntensity: 1.1,
+            beamOpacity: 0.16
+          },
+          evening: {
+            title: 'Evening Candlelight',
+            desc: 'Twilight settles over the travertine salon as warm beeswax tapers illuminate the table in quiet intimacy.',
+            pos: new THREE.Vector3(-2.6, 2.0, 4.3),
+            target: new THREE.Vector3(0, 1.25, 0),
+            bg: new THREE.Color(0x28231e),
+            sunColor: new THREE.Color(0x7c86a1),
+            sunIntensity: 0.25,
+            hemiIntensity: 0.24,
+            candleIntensity: 2.6,
+            beamOpacity: 0.0
+          }
+        };
+
+        let activePreset = PRESETS.morning;
+        let currentLookAt = PRESETS.morning.target.clone();
+        let curBg = PRESETS.morning.bg.clone();
+
+        // Pointer Drag Orbit
+        let isDragging = false, prevX = 0, prevY = 0;
+        let dragOrbitX = 0, dragOrbitY = 0;
+
+        canvas.addEventListener('pointerdown', (e) => {
+          isDragging = true;
+          prevX = e.clientX;
+          prevY = e.clientY;
+        });
+        window.addEventListener('pointerup', () => { isDragging = false; });
+        window.addEventListener('pointermove', (e) => {
+          if (!isDragging) return;
+          const dx = e.clientX - prevX;
+          const dy = e.clientY - prevY;
+          prevX = e.clientX;
+          prevY = e.clientY;
+          dragOrbitX = Math.max(-2.6, Math.min(2.6, dragOrbitX - dx * 0.012));
+          dragOrbitY = Math.max(-0.8, Math.min(1.4, dragOrbitY + dy * 0.008));
+        });
+
+        const titleEl = document.getElementById('atmosphere-view-title');
+        const descEl = document.getElementById('atmosphere-view-desc');
+
+        document.querySelectorAll('.atmosphere-preset-btn').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            const p = PRESETS[btn.dataset.view];
+            if (!p) return;
+            activePreset = p;
+            dragOrbitX = 0;
+            dragOrbitY = 0;
+            titleEl.textContent = p.title;
+            descEl.textContent = p.desc;
+
+            document.querySelectorAll('.atmosphere-preset-btn').forEach((b) => {
+              b.classList.remove('border-ink', 'bg-ink', 'text-cream');
+              b.classList.add('hairline', 'bg-cream/92', 'text-ink');
+            });
+            btn.classList.add('border-ink', 'bg-ink', 'text-cream');
+            btn.classList.remove('hairline', 'bg-cream/92', 'text-ink');
+          });
+        });
+
+        // Pause animation loop automatically when out of view
+        let atmVisible = false;
+        new IntersectionObserver((entries) => {
+          atmVisible = entries[0].isIntersecting;
+        }, { threshold: 0.05 }).observe(container);
+
+        window.addEventListener('resize', () => {
+          if (!container.clientWidth || !container.clientHeight) return;
+          camera.aspect = container.clientWidth / container.clientHeight;
+          camera.updateProjectionMatrix();
+          renderer.setSize(container.clientWidth, container.clientHeight);
+        });
+
+        const clock = new THREE.Clock();
+        function animateAtmosphere() {
+          requestAnimationFrame(animateAtmosphere);
+          if (!atmVisible) return;
+
+          const t = clock.getElapsedTime();
+
+          // Smooth Camera Interpolation
+          const desiredX = activePreset.pos.x + dragOrbitX + Math.sin(t * 0.28) * 0.14;
+          const desiredY = activePreset.pos.y + dragOrbitY;
+          const desiredZ = activePreset.pos.z;
+
+          camera.position.x += (desiredX - camera.position.x) * 0.055;
+          camera.position.y += (desiredY - camera.position.y) * 0.055;
+          camera.position.z += (desiredZ - camera.position.z) * 0.055;
+
+          currentLookAt.lerp(activePreset.target, 0.055);
+          camera.lookAt(currentLookAt);
+
+          // Smooth Lighting & Atmosphere Mood Transitions
+          curBg.lerp(activePreset.bg, 0.05);
+          scene.background.copy(curBg);
+          scene.fog.color.copy(curBg);
+
+          sunDir.color.lerp(activePreset.sunColor, 0.05);
+          sunDir.intensity += (activePreset.sunIntensity - sunDir.intensity) * 0.05;
+          hemiLight.intensity += (activePreset.hemiIntensity - hemiLight.intensity) * 0.05;
+          beamMat.opacity += (activePreset.beamOpacity - beamMat.opacity) * 0.05;
+
+          const flicker = Math.sin(t * 6.9) * 0.12 + Math.cos(t * 11.4) * 0.06;
+          candlePoint.intensity += (activePreset.candleIntensity + flicker - candlePoint.intensity) * 0.08;
+
+          flames.forEach((fl, i) => {
+            fl.scale.y = 1.75 + Math.sin(t * 8.4 + i * 2) * 0.16;
+          });
+
+          renderer.render(scene, camera);
+        }
+
+        animateAtmosphere();
+      }
+
+      /* -----------------------------------------------------------------------
+         INITIALIZE ON WINDOW LOAD
+      ----------------------------------------------------------------------- */
+      window.addEventListener('load', () => {
+        renderSignatureDishes();
+        renderMenuTabs();
+        renderMenuContent();
+        renderExperiences();
+        renderGallery();
+        renderTimeSlots();
+        renderCart();
+        renderAccountReservations();
+        initObservers();
+        initHero3DScene();
+        initAtmosphere3DScene();
+      });
+    })();
+  </script>
+</body>
+</html>
